@@ -3,6 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 class AgeGenderScreen extends StatefulWidget {
+  final String firstName; // الاسم الأول
+  final String lastName; // الاسم الأخير
+
+  const AgeGenderScreen({
+    Key? key,
+    required this.firstName,
+    required this.lastName,
+  }) : super(key: key);
+
   @override
   _AgeGenderScreenState createState() => _AgeGenderScreenState();
 }
@@ -18,16 +27,6 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF4A90E2), // أزرق فاتح
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null && picked != selectedDate) {
@@ -64,16 +63,7 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            // Date of Birth Selector
-            Text(
-              "Date of Birth",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white, // نص أبيض
-              ),
-            ),
-            const SizedBox(height: 10),
+            // حقل اختيار تاريخ الميلاد
             InkWell(
               onTap: () => _selectDate(context),
               child: Container(
@@ -100,16 +90,7 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
               ),
             ),
             const SizedBox(height: 30),
-            // Gender Selector
-            Text(
-              "Select Gender",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white, // نص أبيض
-              ),
-            ),
-            const SizedBox(height: 10),
+            // زر اختيار الجنس
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -118,11 +99,20 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
               ],
             ),
             const Spacer(),
-            // Next Button
+            // زر الاستمرار
             ElevatedButton(
               onPressed: selectedDate != null && selectedGender != null
                   ? () {
-                      context.go('/onboarding/role-selection');
+                      // الانتقال إلى شاشة اختيار الدور مع تمرير جميع البيانات
+                      context.go(
+                        '/onboarding/role-selection',
+                        extra: {
+                          'firstName': widget.firstName,
+                          'lastName': widget.lastName,
+                          'dateOfBirth': selectedDate,
+                          'gender': selectedGender,
+                        },
+                      );
                     }
                   : null, // عطل الزر إذا لم يتم اختيار التاريخ أو الجنس
               style: ElevatedButton.styleFrom(
@@ -159,6 +149,10 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
         decoration: BoxDecoration(
           color: selectedGender == gender ? const Color(0xFFF4B400) : Colors.grey[200],
           borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: selectedGender == gender ? const Color(0xFFF4B400) : Colors.transparent,
+            width: 2,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

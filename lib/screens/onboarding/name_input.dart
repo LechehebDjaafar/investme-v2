@@ -12,9 +12,19 @@ class _NameInputScreenState extends State<NameInputScreen> {
   final TextEditingController _lastNameController = TextEditingController();
 
   void _goToNextStep(BuildContext context) {
-    if (_firstNameController.text.isNotEmpty && _lastNameController.text.isNotEmpty) {
-      // الانتقال إلى شاشة العمر والجنس باستخدام GoRouter
-      context.go('/onboarding/age-gender');
+    String firstName = _firstNameController.text.trim();
+    String lastName = _lastNameController.text.trim();
+
+    if (firstName.isNotEmpty && lastName.isNotEmpty) {
+      // الانتقال إلى شاشة اختيار العمر والجنس مع تمرير الاسم الأول والأخير
+      context.go(
+        '/onboarding/age-gender',
+        extra: {'firstName': firstName, 'lastName': lastName},
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter your first and last name')),
+      );
     }
   }
 
@@ -73,10 +83,14 @@ class _NameInputScreenState extends State<NameInputScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF4B400), // زر ذهبي
                   foregroundColor: Colors.white, // نص أبيض
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "Continue",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

@@ -3,6 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 class InvestorOrEntrepreneurScreen extends StatefulWidget {
+  final String firstName; // الاسم الأول
+  final String lastName; // الاسم الأخير
+  final DateTime dateOfBirth; // تاريخ الميلاد
+  final String gender; // الجنس
+
+  const InvestorOrEntrepreneurScreen({
+    Key? key,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfBirth,
+    required this.gender,
+  }) : super(key: key);
+
   @override
   _InvestorOrEntrepreneurScreenState createState() =>
       _InvestorOrEntrepreneurScreenState();
@@ -10,7 +23,7 @@ class InvestorOrEntrepreneurScreen extends StatefulWidget {
 
 class _InvestorOrEntrepreneurScreenState
     extends State<InvestorOrEntrepreneurScreen> {
-  String? selectedRole;
+  String? selectedRole; // الدور المختار (Investor أو Entrepreneur)
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +52,33 @@ class _InvestorOrEntrepreneurScreenState
               ),
             ),
             const SizedBox(height: 40),
-            // Role Selection
+            // زر اختيار دور المستثمر
             _buildRoleButton("Investor", Icons.trending_up),
             const SizedBox(height: 20),
+            // زر اختيار دور رائد الأعمال
             _buildRoleButton("Entrepreneur", Icons.business_center),
             const Spacer(),
-            // Register Button
+            // زر إنشاء الحساب
             ElevatedButton(
-              onPressed: selectedRole != null
-                  ? () {
-                      // الانتقال إلى الصفحة الرئيسية مع تمرير الدور المختار
-                      context.go('/onboarding/email-password', extra: selectedRole);
-                    }
-                  : null, // عطل الزر إذا لم يتم اختيار الدور
+              onPressed: () {
+                if (selectedRole != null) {
+                  // الانتقال إلى شاشة إنشاء الحساب مع تمرير جميع البيانات
+                  context.go(
+                    '/onboarding/email-password',
+                    extra: {
+                      'userRole': selectedRole,
+                      'firstName': widget.firstName, // الاسم الأول
+                      'lastName': widget.lastName, // الاسم الأخير
+                      'dateOfBirth': widget.dateOfBirth, // تاريخ الميلاد
+                      'gender': widget.gender, // الجنس
+                    },
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please choose a role')),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF4B400), // زر ذهبي
                 foregroundColor: Colors.white, // نص أبيض
@@ -61,7 +88,7 @@ class _InvestorOrEntrepreneurScreenState
                 ),
               ),
               child: Text(
-                "Register",
+                "Create Account",
                 style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),

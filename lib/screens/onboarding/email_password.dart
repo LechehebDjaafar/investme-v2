@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmailPasswordScreen extends StatefulWidget {
-  final String userRole; // الدور المختار (مستثمر أو رائد أعمال)
+  final String userRole; // الدور المختار (Investor أو Entrepreneur)
+  final String firstName; // الاسم الأول
+  final String lastName; // الاسم الأخير
+  final DateTime dateOfBirth; // تاريخ الميلاد
+  final String gender; // الجنس
 
-  const EmailPasswordScreen({Key? key, required this.userRole}) : super(key: key);
+  const EmailPasswordScreen({
+    Key? key,
+    required this.userRole,
+    required this.firstName,
+    required this.lastName,
+    required this.dateOfBirth,
+    required this.gender,
+  }) : super(key: key);
 
   @override
   _EmailPasswordScreenState createState() => _EmailPasswordScreenState();
@@ -15,11 +28,76 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _createAccount(BuildContext context) {
-    if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-      // الانتقال إلى الصفحة الرئيسية مع تمرير الدور المختار
-      context.go('/home', extra: widget.userRole);
+  // خدمة Firebase
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void _createAccount(BuildContext context) async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter email and password')),
+      );
+      return;
     }
+
+    try {
+      // إنشاء الحساب باستخدام Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // الحصول على ID المستخدم
+      String userId = userCredential.user!.uid;
+
+      // إنشاء مستند جديد للمستخدم في Firestore
+      await _firestore.collection('users').doc(userId).set({
+        'userId': userId,
+        'firstName': widget.firstName, // الاسم الأول
+        'lastName': widget.lastName, // الاسم الأخير
+        'age': calculateAge(widget.dateOfBirth), // العمر بناءً على تاريخ الميلاد
+        'gender': widget.gender, // الجنس
+        'email': email, // البريد الإلكتروني
+        'role': widget.userRole, // الدور المختار
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // الانتقال إلى الصفحة الرئيسية بناءً على الدور
+      context.go('/home', extra: {'role': widget.userRole, 'name': '${widget.firstName} ${widget.lastName}'});
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('The password provided is too weak')),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('The account already exists for that email')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred: ${e.message}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred: $e')),
+      );
+    }
+  }
+
+  // حساب العمر بناءً على تاريخ الميلاد
+  int calculateAge(DateTime birthDate) {
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+    if (currentDate.month < birthDate.month ||
+        (currentDate.month == birthDate.month && currentDate.day < birthDate.day)) {
+      age--;
+    }
+    return age;
   }
 
   @override

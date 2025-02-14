@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Welcome, $userName!",
+                "Welcome, ${userName ?? 'User'}!",
                 style: GoogleFonts.poppins(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
               // زر اكتشاف المشاريع أو البحث عن مستثمرين
               ElevatedButton(
                 onPressed: () {
-                  // سيتم تحديد الصفحة لاحقًا
+                  // يمكنك تحديد الصفحة بناءً على الدور
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF4B400), // زر ذهبي

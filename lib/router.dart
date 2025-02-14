@@ -21,16 +21,30 @@ final GoRouter router = GoRouter(
       name: 'name-input',
       builder: (context, state) => nameInput.NameInputScreen(),
     ),
-    GoRoute(
-      path: '/onboarding/age-gender',
-      name: 'age-gender',
-      builder: (context, state) => ageGender.AgeGenderScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/role-selection',
-      name: 'role-selection',
-      builder: (context, state) => roleSelection.InvestorOrEntrepreneurScreen(),
-    ),
+GoRoute(
+  path: '/onboarding/age-gender',
+  name: 'age-gender',
+  builder: (context, state) {
+    final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+    return ageGender.AgeGenderScreen(
+      firstName: userData?['firstName'] ?? '',
+      lastName: userData?['lastName'] ?? '',
+    );
+  },
+),
+GoRoute(
+  path: '/onboarding/role-selection',
+  name: 'role-selection',
+  builder: (context, state) {
+    final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+    return roleSelection.InvestorOrEntrepreneurScreen(
+      firstName: userData?['firstName'] ?? '',
+      lastName: userData?['lastName'] ?? '',
+      dateOfBirth: userData?['dateOfBirth'] ?? DateTime.now(),
+      gender: userData?['gender'] ?? '',
+    );
+  },
+),
 GoRoute(
   path: '/home',
   name: 'home',
@@ -42,12 +56,18 @@ GoRoute(
     return home.HomeScreen(userRole: userRole, userName: userName);
   },
 ),
-    GoRoute(
+GoRoute(
   path: '/onboarding/email-password',
   name: 'email-password',
   builder: (context, state) {
-    final String? userRole = state.extra as String?;
-    return emailpassword.EmailPasswordScreen(userRole: userRole ?? 'Investor');
+    final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+    return emailpassword.EmailPasswordScreen(
+      userRole: userData?['userRole'] ?? 'Investor',
+      firstName: userData?['firstName'] ?? '',
+      lastName: userData?['lastName'] ?? '',
+      dateOfBirth: userData?['dateOfBirth'] ?? DateTime.now(),
+      gender: userData?['gender'] ?? '',
+    );
   },
 ),
 GoRoute(
