@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "616112986042",
+    "project_id": "investme-a3e22",
+    "storage_bucket": "investme-a3e22.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616112986042:android:93bf940f22b5be5a3e2f83",
+        "android_client_info": {
+          "package_name": "com.example.invesme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiJyW_jjDw15_vVKyXQ8iV8pAMqxUXFHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616112986042:android:cbb400a54245eac03e2f83",
+        "android_client_info": {
+          "package_name": "com.example.investme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiJyW_jjDw15_vVKyXQ8iV8pAMqxUXFHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
