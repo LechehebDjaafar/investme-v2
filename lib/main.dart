@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'router.dart'; // استيراد ملف router.dart
-import 'core/theme.dart'; // استيراد Thema
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // استيراد إعدادات Firebase
+import 'router.dart'; // استيراد Router
 
-void main() {
+void main() async {
+  // تهيئة Firebase
+  WidgetsFlutterBinding.ensureInitialized(); // ضمان تهيئة Flutter
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // إعدادات Firebase
+  );
+
+  // تشغيل التطبيق
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
   final _router = router;
 
   @override
@@ -16,7 +22,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'InvestMe',
       debugShowCheckedModeBanner: false,
-      theme: appTheme(), // استخدام Thema المخصص
+      theme: ThemeData(
+        primaryColor: const Color(0xFF1E2A47), // الأزرق الداكن
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF4B400)), // الذهبي
+        useMaterial3: true,
+      ),
       routerConfig: _router,
     );
   }
