@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddProjectScreen extends StatefulWidget {
   @override
@@ -209,7 +210,13 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
 
   Future<void> _saveProject() async {
     try {
-      final entrepreneurId = 'user_id'; // Replace with the actual user ID from Firebase Authentication
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User is not logged in');
+      }
+
+      final entrepreneurId = user.uid;
+
       final projectData = {
         'name': _nameController.text,
         'category': _categoryController.text,
@@ -231,15 +238,12 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
       };
 
-      // Save the project in Firestore
       await _db.collection('projects').add(projectData);
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Project saved successfully!')),
       );
     } catch (e) {
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to save project: $e')),
       );

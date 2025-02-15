@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'add_project_screen.dart'; // استيراد صفحة إضافة المشروع
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'add_project_screen.dart';
+import 'project_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -15,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
             icon: Icon(Icons.add),
             onPressed: () {
               Navigator.push(context,
-               MaterialPageRoute(builder: (context) => AddProjectScreen()));
+              MaterialPageRoute(builder: (context) => AddProjectScreen()));
             },
           ),
         ],
@@ -26,16 +29,35 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Statistics Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                StatCard(title: 'Total Projects', count: 0),
-                StatCard(title: 'Accepted', count: 0, color: Colors.green),
-                StatCard(title: 'Rejected', count: 0, color: Colors.red),
-                StatCard(title: 'Under Review', count: 0, color: Colors.yellow),
-              ],
+            StreamBuilder<QuerySnapshot>(
+              stream: _getProjectsStream(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                final projects = snapshot.data!.docs;
+                int totalProjects = projects.length;
+                int acceptedProjects = projects.where((p) => p['status'] == 'Accepted').length;
+                int rejectedProjects = projects.where((p) => p['status'] == 'Rejected').length;
+                int underReviewProjects = projects.where((p) => p['status'] == 'Under Review').length;
+
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StatCard(title: 'Total Projects', count: totalProjects),
+                        StatCard(title: 'Accepted', count: acceptedProjects, color: Colors.green),
+                        StatCard(title: 'Rejected', count: rejectedProjects, color: Colors.red),
+                        StatCard(title: 'Under Review', count: underReviewProjects, color: Colors.yellow),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                );
+              },
             ),
-            SizedBox(height: 20),
 
             // Projects List
             Text(
@@ -45,7 +67,7 @@ class DashboardScreen extends StatelessWidget {
             SizedBox(height: 10),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _db.collection('projects').snapshots(),
+                stream: _getProjectsStream(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
@@ -87,6 +109,19 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Function to get projects for the current user
+  Stream<QuerySnapshot> _getProjectsStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.empty();
+    }
+
+    return _db
+        .collection('projects')
+        .where('entrepreneurId', isEqualTo: user.uid)
+        .snapshots();
+  }
 }
 
 // Component for Statistics Card
@@ -121,49 +156,5 @@ class StatCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// Component for Project Card
-class ProjectCard extends StatelessWidget {
-  final String name;
-  final String description;
-  final String status;
-  final VoidCallback onTap;
-
-  const ProjectCard({
-    required this.name,
-    required this.description,
-    required this.status,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        title: Text(name),
-        subtitle: Text(description),
-        trailing: Chip(
-          label: Text(status),
-          backgroundColor: getStatusColor(status),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Color getStatusColor(String status) {
-    switch (status) {
-      case 'Accepted':
-        return Colors.green;
-      case 'Rejected':
-        return Colors.red;
-      case 'Under Review':
-        return Colors.yellow;
-      default:
-        return Colors.grey;
-    }
   }
 }
