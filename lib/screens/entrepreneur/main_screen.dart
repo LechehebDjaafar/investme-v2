@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../onboarding/splash_screen.dart';
 import 'dashboard.dart';
 import 'messages_screen.dart';
 import 'notifications_screen.dart';
@@ -6,20 +8,27 @@ import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _MainStateManager createState() => _MainStateManager();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainStateManager extends State<MainScreen> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    DashboardScreen(),   // Home/Dashboard
-    MessagesScreen(),    // Messages
-    NotificationsScreen(), // Notifications
-    ProfileScreen(),     // Profile
+    DashboardScreen(),
+    MessagesScreen(),
+    NotificationsScreen(),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    // If no user is logged in, redirect to splash screen
+    if (user == null) {
+      return SplashScreen(); // Redirect to splash screen
+    }
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -29,6 +38,10 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
+        selectedItemColor: const Color(0xFFF4B400),
+        unselectedItemColor: const Color(0xFF888888),
+        backgroundColor: const Color(0xFF1E2A47),
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

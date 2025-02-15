@@ -67,7 +67,7 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
       });
 
       // الانتقال إلى الصفحة الرئيسية بناءً على الدور
-      context.go('/home', extra: {'role': widget.userRole, 'name': '${widget.firstName} ${widget.lastName}'});
+      context.go('/main', extra: {'role': widget.userRole, 'name': '${widget.firstName} ${widget.lastName}'});
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(

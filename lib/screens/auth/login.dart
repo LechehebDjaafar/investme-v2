@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         String lastName = userDoc['lastName'] ?? '';
 
         // الانتقال إلى الصفحة الرئيسية بناءً على الدور
-        context.go('/home', extra: {'role': role, 'name': '$firstName $lastName'});
+        context.go('/main', extra: {'role': role, 'name': '$firstName $lastName'});
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User data not found')),

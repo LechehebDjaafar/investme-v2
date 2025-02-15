@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'screens/entrepreneur/main_screen.dart';
+import 'screens/onboarding/help_screen.dart';
 import 'screens/onboarding/splash_screen.dart' as splash;
 import 'screens/onboarding/email_password.dart' as emailpassword;
 import 'screens/onboarding/name_input.dart' as nameInput;
@@ -19,8 +21,19 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      name: 'splash',
-      builder: (context, state) => splash.SplashScreen(),
+      builder: (context, state) => splash.SplashScreen(), // Home screen
+    ),
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => splash.SplashScreen(), // Splash screen
+    ),
+    GoRoute(
+      path: '/help',
+      builder: (context, state) => HelpScreen(), // Help screen
+    ),
+      GoRoute(
+      path: '/main',
+      builder: (context, state) => MainScreen(), // Main screen with BottomNavigationBar
     ),
     GoRoute(
       path: '/onboarding/name',
