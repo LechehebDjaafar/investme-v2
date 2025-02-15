@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class HelpScreen extends StatelessWidget {
+class HelpScreen extends StatefulWidget {
+  @override
+  _HelpScreenState createState() => _HelpScreenState();
+}
+
+class _HelpScreenState extends State<HelpScreen> {
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -20,6 +26,8 @@ class HelpScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
+
+            // FAQ 1
             ExpansionTile(
               title: Text('How do I add a new project?'),
               children: [
@@ -31,6 +39,8 @@ class HelpScreen extends StatelessWidget {
                 ),
               ],
             ),
+
+            // FAQ 2
             ExpansionTile(
               title: Text('How do I edit my profile?'),
               children: [
@@ -50,6 +60,8 @@ class HelpScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
+
+            // Message Input Field
             TextFormField(
               controller: _messageController,
               maxLines: 5,
@@ -59,11 +71,49 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                _sendMessage(context);
-              },
-              child: Text('Send Message'),
+
+            // Buttons Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Cancel Button
+                ElevatedButton(
+                  onPressed: () {
+                    context.go('/main'); // Go back to ProfileScreen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Red for cancel
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+
+                // Send Button
+                ElevatedButton(
+                  onPressed: () {
+                    _sendMessage(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF4B400), // Gold for send
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    'Send',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -74,6 +124,7 @@ class HelpScreen extends StatelessWidget {
   // Function to send a message to InvestMe
   void _sendMessage(BuildContext context) {
     final message = _messageController.text.trim();
+
     if (message.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a message')),
@@ -81,12 +132,15 @@ class HelpScreen extends StatelessWidget {
       return;
     }
 
-    // TODO: Implement sending the message to InvestMe (e.g., via email or Firestore)
+    // Simulate sending the message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Message sent successfully!')),
     );
 
     // Clear the text field after sending
     _messageController.clear();
+
+    // Navigate to Dashboard after sending the message
+    context.go('/main'); // Assuming '/main' is the route for MainScreen
   }
 }
