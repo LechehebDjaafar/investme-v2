@@ -208,45 +208,49 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     );
   }
 
-  Future<void> _saveProject() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('User is not logged in');
-      }
-
-      final entrepreneurId = user.uid;
-
-      final projectData = {
-        'name': _nameController.text,
-        'category': _categoryController.text,
-        'description': _descriptionController.text,
-        'targetAmount': double.tryParse(_targetAmountController.text) ?? 0,
-        'expectedCompletionDate': Timestamp.fromDate(
-            DateTime.parse(_expectedCompletionDateController.text)),
-        'completionPercentage': _completionPercentage,
-        'currentAmount': _currentAmount,
-        'investorCount': _investorCount,
-        'media': {
-          'images': _images,
-          'pdf': _pdf,
-          'video': _video,
-        },
-        'status': 'Under Review', // Default status
-        'entrepreneurId': entrepreneurId, // Link to the entrepreneur
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      };
-
-      await _db.collection('projects').add(projectData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Project saved successfully!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save project: $e')),
-      );
+Future<void> _saveProject() async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
     }
+
+    final entrepreneurId = user.uid;
+
+    final projectData = {
+      'name': _nameController.text,
+      'category': _categoryController.text,
+      'description': _descriptionController.text,
+      'targetAmount': double.tryParse(_targetAmountController.text) ?? 0,
+      'expectedCompletionDate': Timestamp.fromDate(
+          DateTime.parse(_expectedCompletionDateController.text)),
+      'completionPercentage': _completionPercentage,
+      'currentAmount': _currentAmount,
+      'investorCount': _investorCount,
+      'media': {
+        'images': _images,
+        'pdf': _pdf,
+        'video': _video,
+      },
+      'status': 'Under Review', // Default status
+      'entrepreneurId': entrepreneurId, // Link to the entrepreneur
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+
+    // Add the project and get the document reference
+    DocumentReference docRef = await _db.collection('projects').add(projectData);
+
+    // Update the project with its projectId
+    await docRef.update({'projectId': docRef.id});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Project saved successfully!')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to save project: $e')),
+    );
   }
+}
 }

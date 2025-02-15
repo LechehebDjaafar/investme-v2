@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'add_project_screen.dart';
 import 'project_card.dart';
+import 'project_details_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -76,19 +77,18 @@ class DashboardScreen extends StatelessWidget {
                   final projects = snapshot.data!.docs;
 
                   return ListView.builder(
-                    itemCount: projects.length,
-                    itemBuilder: (context, index) {
-                      final project = projects[index].data() as Map<String, dynamic>;
-                      return ProjectCard(
-                        name: project['name'],
-                        description: project['description'],
-                        status: project['status'],
+                      itemCount: projects.length,
+                      itemBuilder: (context, index) {
+                        final project = projects[index].data() as Map<String, dynamic>;
+                        project['projectId'] = projects[index].id; // Add projectId to the project data
+
+                        return ProjectCard(
+                          name: project['name'],
+                          description: project['description'],
+                          status: project['status'],
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/project_details',
-                            arguments: project,
-                          );
+                        Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ProjectDetailsScreen(project: project)));
                         },
                       );
                     },
