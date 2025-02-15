@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // استيراد إعدادات Firebase
-import 'router.dart'; // استيراد Router
+import 'firebase_options.dart';
+import 'screens/entrepreneur/main_screen.dart'; // استيراد إعدادات Firebase
+ // استيراد MainScreen (BottomNavigationBar)
 
 void main() async {
   // تهيئة Firebase
@@ -15,11 +16,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final _router = router;
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'InvestMe',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF4B400)), // الذهبي
         useMaterial3: true,
       ),
-      routerConfig: _router,
+      home: MainScreen(), // شاشة BottomNavigationBar كشاشة رئيسية
     );
   }
 }

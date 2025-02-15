@@ -1,34 +1,50 @@
 import 'package:flutter/material.dart';
 
 class NotificationsScreen extends StatelessWidget {
-  final List<String> notifications = [
-    'Project "Project 1" has been accepted.',
-    'New message from Investor 1.',
-    'Project "Project 2" status changed to Pending.',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Notifications'),
       ),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: ListTile(
-              title: Text(notifications[index]),
-              trailing: IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  // Delete the notification
-                },
-              ),
-            ),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: 5, // Example: Display 5 notifications
+          itemBuilder: (context, index) {
+            return NotificationTile(
+              title: 'Project Approved',
+              subtitle: 'Your project "Eco App" has been approved!',
+              timestamp: '3 hours ago',
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// Reusable notification tile component
+class NotificationTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String timestamp;
+
+  const NotificationTile({
+    required this.title,
+    required this.subtitle,
+    required this.timestamp,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: Icon(Icons.notifications, color: Colors.blue),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: Text(timestamp, style: TextStyle(color: Colors.grey)),
       ),
     );
   }
