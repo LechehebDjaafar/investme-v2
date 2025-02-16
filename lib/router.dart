@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'screens/entrepreneur/main_screen.dart';
 import 'screens/onboarding/help_screen.dart';
@@ -13,12 +12,19 @@ import 'screens/entrepreneur/dashboard.dart' as entrepreneurDashboard;
 import 'screens/entrepreneur/messages_screen.dart' as entrepreneurMessages;
 import 'screens/entrepreneur/notifications_screen.dart' as entrepreneurNotifications;
 import 'screens/entrepreneur/settings_screen.dart' as entrepreneurSettings;
-// import 'screens/investor/browse_projects.dart' as investorBrowseProjects;
 import 'screens/entrepreneur/add_project.dart' as entrepreneurAddProject;
+
+// إضافة مستوردات لجزء المستثمر
+import 'screens/investor/investor_main_screen.dart' as investorMainScreen;
+import 'screens/investor/investor_dashboard.dart' as investorDashboard;
+import 'screens/investor/browse_projects.dart' as investorBrowseProjects;
+import 'screens/investor/project_details.dart' as investorProjectDetails;
+import 'screens/investor/investor_profile.dart' as investorProfile;
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
   routes: [
+    // شاشات التحميل والمساعدة
     GoRoute(
       path: '/',
       builder: (context, state) => splash.SplashScreen(), // Home screen
@@ -31,10 +37,15 @@ final GoRouter router = GoRouter(
       path: '/help',
       builder: (context, state) => HelpScreen(), // Help screen
     ),
-      GoRoute(
-      path: '/main',
-      builder: (context, state) => MainScreen(), // Main screen with BottomNavigationBar
+
+    // شاشة تسجيل الدخول
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => login.LoginScreen(),
     ),
+
+    // شاشات التسجيل
     GoRoute(
       path: '/onboarding/name',
       name: 'name-input',
@@ -71,7 +82,6 @@ final GoRouter router = GoRouter(
         final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
         final String? userRole = userData?['role'];
         final String? userName = userData?['name'];
-
         return home.HomeScreen(userRole: userRole, userName: userName);
       },
     ),
@@ -89,12 +99,13 @@ final GoRouter router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/login',
-      name: 'login',
-      builder: (context, state) => login.LoginScreen(),
-    ),
+
     // شاشات رائد الأعمال
+    GoRoute(
+      path: '/entrepreneur/main',
+      name: 'entrepreneur-main',
+      builder: (context, state) => MainScreen(), // Main screen with BottomNavigationBar
+    ),
     GoRoute(
       path: '/entrepreneur/dashboard',
       name: 'entrepreneur-dashboard',
@@ -120,11 +131,32 @@ final GoRouter router = GoRouter(
       name: 'entrepreneur-add-project',
       builder: (context, state) => entrepreneurAddProject.AddProjectScreen(),
     ),
+
     // شاشات المستثمر
-    // GoRoute(
-    //   path: '/investor/browse-projects',
-    //   name: 'investor-browse-projects',
-    //   builder: (context, state) => investorBrowseProjects.BrowseProjectsScreen(),
-    // ),
+    GoRoute(
+      path: '/investor/main',
+      name: 'investor-main',
+      builder: (context, state) => investorMainScreen.InvestorMainScreen(),
+    ),
+    GoRoute(
+      path: '/investor/dashboard',
+      name: 'investor-dashboard',
+      builder: (context, state) => investorDashboard.InvestorDashboard(),
+    ),
+    GoRoute(
+      path: '/investor/browse-projects',
+      name: 'investor-browse-projects',
+      builder: (context, state) => investorBrowseProjects.BrowseProjects(),
+    ),
+    GoRoute(
+      path: '/investor/project-details',
+      name: 'investor-project-details',
+      builder: (context, state) => investorProjectDetails.ProjectDetails(),
+    ),
+    GoRoute(
+      path: '/investor/profile',
+      name: 'investor-profile',
+      builder: (context, state) => investorProfile.InvestorProfile(),
+    ),
   ],
 );

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:investme/router.dart';
 import 'firebase_options.dart';
-import 'screens/entrepreneur/main_screen.dart'; // استيراد إعدادات Firebase
  // استيراد MainScreen (BottomNavigationBar)
 
 void main() async {
