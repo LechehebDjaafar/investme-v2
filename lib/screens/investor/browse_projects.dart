@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BrowseProjects extends StatelessWidget {
@@ -122,7 +123,9 @@ class BrowseProjects extends StatelessWidget {
           style: GoogleFonts.poppins(fontSize: 12, color: Colors.white70),
         ),
         trailing: Icon(Icons.arrow_forward_ios, color: Colors.white70),
-        onTap: () => Navigator.pushNamed(context, '/project_details', arguments: projectId),
+        onTap: () {
+          context.go('/investor/project-details', extra: projectId);
+        },
       ),
     );
   }

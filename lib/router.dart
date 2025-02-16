@@ -183,14 +183,14 @@ final GoRouter router = GoRouter(
     ),
 
     // تفاصيل المشروع (Project Details)
-    GoRoute(
-      path: '/investor/project-details',
-      name: 'investor-project-details',
-      builder: (context, state) {
-        final String projectId = state.uri.queryParameters['projectId'] ?? '';
-        return investorProjectDetails.ProjectDetails(projectId: projectId);
-      },
-    ),
+GoRoute(
+  path: '/investor/project-details',
+  name: 'investor-project-details',
+  builder: (context, state) {
+    final String projectId = state.extra as String;
+    return investorProjectDetails.ProjectDetails(projectId: projectId);
+  },
+),
 
     // ملف المستثمر الشخصي (Profile)
     GoRoute(

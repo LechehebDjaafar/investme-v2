@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProjectDetails extends StatelessWidget {
@@ -8,7 +9,7 @@ class ProjectDetails extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  ProjectDetails({required this.projectId});
+  ProjectDetails({required this.projectId, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
