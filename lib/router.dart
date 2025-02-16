@@ -22,35 +22,41 @@ import 'screens/investor/project_details.dart' as investorProjectDetails;
 import 'screens/investor/investor_profile.dart' as investorProfile;
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/', // البداية تكون من الشاشة الأولى (Splash Screen)
   routes: [
-    // شاشات التحميل والمساعدة
+    // ================== General Screens ==================
+    // شاشة التحميل (Splash Screen)
     GoRoute(
       path: '/',
-      builder: (context, state) => splash.SplashScreen(), // Home screen
+      builder: (context, state) => splash.SplashScreen(),
     ),
     GoRoute(
       path: '/splash',
-      builder: (context, state) => splash.SplashScreen(), // Splash screen
-    ),
-    GoRoute(
-      path: '/help',
-      builder: (context, state) => HelpScreen(), // Help screen
+      builder: (context, state) => splash.SplashScreen(),
     ),
 
-    // شاشة تسجيل الدخول
+    // شاشة المساعدة (Help Screen)
+    GoRoute(
+      path: '/help',
+      builder: (context, state) => HelpScreen(),
+    ),
+
+    // شاشة تسجيل الدخول (Login Screen)
     GoRoute(
       path: '/login',
       name: 'login',
       builder: (context, state) => login.LoginScreen(),
     ),
 
-    // شاشات التسجيل
+    // ================== Onboarding Screens ==================
+    // شاشة إدخال الاسم (Name Input)
     GoRoute(
       path: '/onboarding/name',
       name: 'name-input',
       builder: (context, state) => nameInput.NameInputScreen(),
     ),
+
+    // شاشة العمر والجنس (Age and Gender)
     GoRoute(
       path: '/onboarding/age-gender',
       name: 'age-gender',
@@ -62,6 +68,8 @@ final GoRouter router = GoRouter(
         );
       },
     ),
+
+    // شاشة اختيار الدور (Investor or Entrepreneur)
     GoRoute(
       path: '/onboarding/role-selection',
       name: 'role-selection',
@@ -75,16 +83,8 @@ final GoRouter router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/home',
-      name: 'home',
-      builder: (context, state) {
-        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
-        final String? userRole = userData?['role'];
-        final String? userName = userData?['name'];
-        return home.HomeScreen(userRole: userRole, userName: userName);
-      },
-    ),
+
+    // شاشة البريد الإلكتروني وكلمة المرور (Email Password)
     GoRoute(
       path: '/onboarding/email-password',
       name: 'email-password',
@@ -100,59 +100,99 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    // شاشات رائد الأعمال
+    // شاشة الرئيسية بعد اختيار الدور (Home Screen)
+    GoRoute(
+      path: '/home',
+      name: 'home',
+      builder: (context, state) {
+        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+        final String? userRole = userData?['role'];
+        final String? userName = userData?['name'];
+
+        if (userRole == null || userName == null) {
+          return splash.SplashScreen(); // إعادة التوجيه إلى Splash Screen إذا لم يكن هناك دور أو اسم
+        }
+
+        return home.HomeScreen(userRole: userRole, userName: userName);
+      },
+    ),
+
+    // ================== Entrepreneur Screens ==================
+    // شاشة رائد الأعمال الرئيسية (Main Screen)
     GoRoute(
       path: '/entrepreneur/main',
       name: 'entrepreneur-main',
-      builder: (context, state) => MainScreen(), // Main screen with BottomNavigationBar
+      builder: (context, state) => MainScreen(),
     ),
+
+    // داشبورد رائد الأعمال (Dashboard)
     GoRoute(
       path: '/entrepreneur/dashboard',
       name: 'entrepreneur-dashboard',
       builder: (context, state) => entrepreneurDashboard.DashboardScreen(),
     ),
+
+    // رسائل رائد الأعمال (Messages)
     GoRoute(
       path: '/entrepreneur/messages',
       name: 'entrepreneur-messages',
       builder: (context, state) => entrepreneurMessages.MessagesScreen(),
     ),
+
+    // إشعارات رائد الأعمال (Notifications)
     GoRoute(
       path: '/entrepreneur/notifications',
       name: 'entrepreneur-notifications',
       builder: (context, state) => entrepreneurNotifications.NotificationsScreen(),
     ),
+
+    // الإعدادات (Settings)
     GoRoute(
       path: '/entrepreneur/settings',
       name: 'entrepreneur-settings',
       builder: (context, state) => entrepreneurSettings.SettingsScreen(),
     ),
+
+    // إضافة مشروع جديد (Add Project)
     GoRoute(
       path: '/entrepreneur/add-project',
       name: 'entrepreneur-add-project',
       builder: (context, state) => entrepreneurAddProject.AddProjectScreen(),
     ),
 
-    // شاشات المستثمر
+    // ================== Investor Screens ==================
+    // شاشة المستثمر الرئيسية (Main Screen)
     GoRoute(
       path: '/investor/main',
       name: 'investor-main',
       builder: (context, state) => investorMainScreen.InvestorMainScreen(),
     ),
+
+    // داشبورد المستثمر (Dashboard)
     GoRoute(
       path: '/investor/dashboard',
       name: 'investor-dashboard',
       builder: (context, state) => investorDashboard.InvestorDashboard(),
     ),
+
+    // استعراض المشاريع (Browse Projects)
     GoRoute(
       path: '/investor/browse-projects',
       name: 'investor-browse-projects',
       builder: (context, state) => investorBrowseProjects.BrowseProjects(),
     ),
+
+    // تفاصيل المشروع (Project Details)
     GoRoute(
       path: '/investor/project-details',
       name: 'investor-project-details',
-      builder: (context, state) => investorProjectDetails.ProjectDetails(),
+      builder: (context, state) {
+        final String projectId = state.uri.queryParameters['projectId'] ?? '';
+        return investorProjectDetails.ProjectDetails(projectId: projectId);
+      },
     ),
+
+    // ملف المستثمر الشخصي (Profile)
     GoRoute(
       path: '/investor/profile',
       name: 'investor-profile',

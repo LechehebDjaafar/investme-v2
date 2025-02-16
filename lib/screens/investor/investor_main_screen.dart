@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'investor_dashboard.dart';
 import 'browse_projects.dart';
 import 'investor_notifications.dart';
-import 'project_details.dart';
 import 'investor_profile.dart';
 
 class InvestorMainScreen extends StatefulWidget {

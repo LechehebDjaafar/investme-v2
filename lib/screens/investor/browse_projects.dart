@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BrowseProjects extends StatelessWidget {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+      backgroundColor: const Color(0xFF1E2A47),
       appBar: AppBar(
         title: Text(
           'Browse Projects',
-          style: GoogleFonts.poppins(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // White text
-          ),
+          style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF1E2A47), // Dark blue background
-        elevation: 0, // Remove shadow
+        backgroundColor: const Color(0xFF1E2A47),
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,7 +26,7 @@ class BrowseProjects extends StatelessWidget {
             TextField(
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.1), // Semi-transparent white
+                fillColor: Colors.white.withOpacity(0.1),
                 prefixIcon: Icon(Icons.search, color: Colors.white70),
                 hintText: 'Search projects...',
                 hintStyle: GoogleFonts.poppins(color: Colors.white70),
@@ -42,11 +41,7 @@ class BrowseProjects extends StatelessWidget {
             // Filters
             Text(
               'Filters',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // White text
-              ),
+              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 5),
             Wrap(
@@ -61,22 +56,43 @@ class BrowseProjects extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Projects List
-            Text(
-              'Available Projects',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // White text
-              ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Example project count
-                itemBuilder: (context, index) {
-                  return _buildProjectCard(context);
-                },
-              ),
+            StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('projects').where('status', isEqualTo: 'Accepted').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Text('No projects available', style: TextStyle(color: Colors.white));
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Available Projects',
+                      style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> projectData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                       return _buildProjectCard(
+                        context,
+                        projectData['name'], 
+                       '${projectData['currentAmount']}', 
+                       '${projectData['targetAmount']}', 
+                        projectData['projectId']
+);
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -84,51 +100,29 @@ class BrowseProjects extends StatelessWidget {
     );
   }
 
-  // Build a filter chip
   Widget _buildFilterChip(String label) {
     return Chip(
-      label: Text(
-        label,
-        style: GoogleFonts.poppins(color: Colors.white70),
-      ),
-      backgroundColor: Colors.white.withOpacity(0.1), // Semi-transparent white
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      label: Text(label, style: GoogleFonts.poppins(color: Colors.white70)),
+      backgroundColor: Colors.white.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 
-  // Build a project card
-  Widget _buildProjectCard(BuildContext context) {
+  Widget _buildProjectCard( BuildContext context,String projectName, String currentAmount, String targetAmount, String projectId) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white.withOpacity(0.1), // Semi-transparent white
+      color: Colors.white.withOpacity(0.1),
       child: ListTile(
-        leading: Icon(Icons.business, color: Colors.white70), // Project icon
         title: Text(
-          'Project Name',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: Colors.white, // White text
-          ),
+          projectName,
+          style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
         ),
         subtitle: Text(
-          'Description of the project...',
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: Colors.white70, // Light gray text
-          ),
+          'Current Amount: $currentAmount | Target: $targetAmount',
+          style: GoogleFonts.poppins(fontSize: 12, color: Colors.white70),
         ),
-        trailing: Text(
-          '\$5,000 Needed',
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.white, // White text
-          ),
-        ),
-        onTap: () {
-          Navigator.pushNamed(context, '/project_details');
-        },
+        trailing: Icon(Icons.arrow_forward_ios, color: Colors.white70),
+        onTap: () => Navigator.pushNamed(context, '/project_details', arguments: projectId),
       ),
     );
   }
