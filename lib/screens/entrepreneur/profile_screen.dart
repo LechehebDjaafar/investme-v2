@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert'; // For base64 encoding/decoding
-import 'dart:typed_data'; // For Uint8List
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -324,20 +323,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Show help dialog
-  void _showHelpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Help'),
-        content: Text('Here you can find information about how to use the app.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
 }

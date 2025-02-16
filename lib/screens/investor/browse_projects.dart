@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BrowseProjects extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1E2A47), // Dark blue background
       appBar: AppBar(
-        title: Text('Browse Projects'),
-        backgroundColor: Color(0xFF1E2A47),
+        title: Text(
+          'Browse Projects',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // White text
+          ),
+        ),
+        backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+        elevation: 0, // Remove shadow
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -16,21 +26,29 @@ class BrowseProjects extends StatelessWidget {
             // Search Bar
             TextField(
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.1), // Semi-transparent white
+                prefixIcon: Icon(Icons.search, color: Colors.white70),
                 hintText: 'Search projects...',
-                prefixIcon: Icon(Icons.search),
+                hintStyle: GoogleFonts.poppins(color: Colors.white70),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // Filter Options
+            // Filters
             Text(
               'Filters',
-              style: TextStyle(fontSize: 18, color: Colors.black),
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // White text
+              ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Wrap(
               spacing: 8,
               children: [
@@ -40,14 +58,18 @@ class BrowseProjects extends StatelessWidget {
                 _buildFilterChip('Real Estate'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            // Project List
+            // Projects List
             Text(
               'Available Projects',
-              style: TextStyle(fontSize: 18, color: Colors.black),
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // White text
+              ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: 5, // Example project count
@@ -62,21 +84,48 @@ class BrowseProjects extends StatelessWidget {
     );
   }
 
+  // Build a filter chip
   Widget _buildFilterChip(String label) {
     return Chip(
-      label: Text(label),
-      backgroundColor: Colors.grey[200],
-      labelStyle: TextStyle(color: Colors.black),
+      label: Text(
+        label,
+        style: GoogleFonts.poppins(color: Colors.white70),
+      ),
+      backgroundColor: Colors.white.withOpacity(0.1), // Semi-transparent white
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
     );
   }
 
+  // Build a project card
   Widget _buildProjectCard(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: Colors.white.withOpacity(0.1), // Semi-transparent white
       child: ListTile(
-        title: Text('Project Name'),
-        subtitle: Text('Description of the project...'),
-        trailing: Text('\$10,000 Needed'),
+        leading: Icon(Icons.business, color: Colors.white70), // Project icon
+        title: Text(
+          'Project Name',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            color: Colors.white, // White text
+          ),
+        ),
+        subtitle: Text(
+          'Description of the project...',
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            color: Colors.white70, // Light gray text
+          ),
+        ),
+        trailing: Text(
+          '\$5,000 Needed',
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            color: Colors.white, // White text
+          ),
+        ),
         onTap: () {
           Navigator.pushNamed(context, '/project_details');
         },

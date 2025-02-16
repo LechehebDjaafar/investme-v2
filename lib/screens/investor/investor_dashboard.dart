@@ -1,112 +1,150 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InvestorDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1E2A47), // Dark blue background
       appBar: AppBar(
-        title: Text('Investor Dashboard'),
-        backgroundColor: Color(0xFF1E2A47),
+        title: Text(
+          'Investor Dashboard',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // White text
+          ),
+        ),
+        backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+        elevation: 0, // Remove shadow
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Statistics Section
+            // Section 1: Quick Stats
             Text(
               'Quick Stats',
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // White text
+              ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatCard('Projects Invested', '0'),
-                _buildStatCard('Total Investments', '\$0'),
-                _buildStatCard('Expected Returns', '\$0'),
+                _buildStatCard('Projects Invested', '5'),
+                _buildStatCard('Total Investments', '\$10,000'),
+                _buildStatCard('Expected Returns', '\$2,000'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            // Browse Projects Button
+            // Section 2: Browse Projects Button
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/browse_projects');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFF4B400),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                foregroundColor: Colors.white, backgroundColor: const Color(0xFFF4B400), // White text
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: Text(
                 'Browse Projects',
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Section 3: Invested Projects List
+            Text(
+              'Your Invested Projects',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // White text
+              ),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 3, // Example project count
+                itemBuilder: (context, index) {
+                  return _buildProjectCard(context);
+                },
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Messages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.pushNamed(context, '/messages');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/notifications');
-          } else if (index == 3) {
-            Navigator.pushNamed(context, '/profile');
-          }
-        },
-      ),
     );
   }
 
+  // Build a stat card for quick stats
   Widget _buildStatCard(String title, String value) {
     return Container(
       width: 100,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.1), // Semi-transparent white
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.white30, width: 1),
       ),
       child: Column(
         children: [
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: Colors.white70, // Light gray text
+            ),
           ),
+          const SizedBox(height: 5),
           Text(
             value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // White text
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Build a project card for invested projects
+  Widget _buildProjectCard(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: Colors.white.withOpacity(0.1), // Semi-transparent white
+      child: ListTile(
+        leading: Icon(Icons.business, color: Colors.white70), // Project icon
+        title: Text(
+          'Project Name',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            color: Colors.white, // White text
+          ),
+        ),
+        subtitle: Text(
+          'Invested \$2,000 | Expected Return \$500',
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            color: Colors.white70, // Light gray text
+          ),
+        ),
+        trailing: Icon(Icons.arrow_forward_ios, color: Colors.white70), // Arrow icon
+        onTap: () {
+          Navigator.pushNamed(context, '/project_details');
+        },
       ),
     );
   }

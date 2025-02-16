@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
 import 'investor_dashboard.dart';
+import 'browse_projects.dart';
+import 'investor_notifications.dart';
+import 'project_details.dart';
 import 'investor_profile.dart';
 
 class InvestorMainScreen extends StatefulWidget {
-  const InvestorMainScreen({Key? key}) : super(key: key);
-
   @override
   _InvestorMainScreenState createState() => _InvestorMainScreenState();
 }
@@ -15,17 +14,11 @@ class _InvestorMainScreenState extends State<InvestorMainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-     InvestorDashboard(), // Home
-     Center(child: Text('Messages')), // Messages
-     Center(child: Text('Notifications')), // Notifications
-     InvestorProfile(), // Profile
+    InvestorDashboard(), // Home
+    BrowseProjects(), // Messages (Browse Projects)
+    NotificationsScreen(), // Notifications (Project Details)
+    InvestorProfile(), // Profile
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,22 +26,30 @@ class _InvestorMainScreenState extends State<InvestorMainScreen> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-        items: const [
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        selectedItemColor: const Color(0xFFF4B400), // Gold for selected items
+        unselectedItemColor: const Color(0xFF888888), // Gray for unselected items
+        backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+        type: BottomNavigationBarType.fixed, // Fixed type for multiple items
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Messages',
+            icon: Icon(Icons.search), // Use search icon for Browse Projects
+            label: 'Browse',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: Icon(Icons.notifications), // Use notifications icon
             label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person), // Use person icon for Profile
             label: 'Profile',
           ),
         ],
