@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'screens/entrepreneur/main_screen.dart';
+import 'screens/investor/ivestme_EditProfile.dart' as EditPro;
+import 'screens/investor/profile-entrepreneur.dart' as EntrepreneurPro;
 import 'screens/onboarding/help_screen.dart';
 import 'screens/onboarding/splash_screen.dart' as splash;
 import 'screens/onboarding/email_password.dart' as emailpassword;
@@ -13,7 +15,7 @@ import 'screens/entrepreneur/messages_screen.dart' as entrepreneurMessages;
 import 'screens/entrepreneur/notifications_screen.dart' as entrepreneurNotifications;
 import 'screens/entrepreneur/settings_screen.dart' as entrepreneurSettings;
 import 'screens/entrepreneur/add_project.dart' as entrepreneurAddProject;
-
+import 'splashscreen.dart' as splash1; // Removed incorrect import
 // إضافة مستوردات لجزء المستثمر
 import 'screens/investor/investor_main_screen.dart' as investorMainScreen;
 import 'screens/investor/investor_dashboard.dart' as investorDashboard;
@@ -28,7 +30,7 @@ final GoRouter router = GoRouter(
     // شاشة التحميل (Splash Screen)
     GoRoute(
       path: '/',
-      builder: (context, state) => splash.SplashScreen(),
+      builder: (context, state) => splash1.SplashScreen(),
     ),
     GoRoute(
       path: '/splash',
@@ -197,6 +199,19 @@ GoRoute(
       path: '/investor/profile',
       name: 'investor-profile',
       builder: (context, state) => investorProfile.InvestorProfile(),
+    ),
+    GoRoute(
+      path: '/investor/ivestme_EditProfile.dart',
+      name: 'ivestme_EditProfile.dart',
+      builder: (context, state) => EditPro.EditProfile(),
+    ),
+    GoRoute(
+      path: '/investor/profile-entrepreneur',
+      name: 'profile-entrepreneur',
+      builder: (context, state) {
+        final String entrepreneurId = state.extra as String;
+        return EntrepreneurPro.EntrepreneurProfile(entrepreneurId: entrepreneurId);
+      },
     ),
   ],
 );

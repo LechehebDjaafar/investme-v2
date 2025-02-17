@@ -2,7 +2,7 @@
     <application
         android:label="investme"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher3">
+        android:icon="@mipmap/ic_launcher4">
         <activity
             android:name=".MainActivity"
             android:exported="true"
