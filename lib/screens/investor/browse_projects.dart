@@ -120,6 +120,14 @@ class _BrowseProjectsState extends State<BrowseProjects> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     Map<String, dynamic> projectData = filteredProjects[index];
+
+                    // Check if projectId exists before proceeding
+                    if (projectData['projectId'] == null || projectData['projectId'].toString().isEmpty) {
+                      return Card(
+                        child: Center(child: Text('Invalid Project')),
+                      );
+                    }
+
                     return _buildProjectCard(context, projectData);
                   },
                   childCount: filteredProjects.length,
@@ -157,6 +165,15 @@ class _BrowseProjectsState extends State<BrowseProjects> {
 
   // Build a project card
   Widget _buildProjectCard(BuildContext context, Map<String, dynamic> projectData) {
+      if (projectData['projectId'] == null || 
+      projectData['name'] == null || 
+      projectData['category'] == null || 
+      projectData['currentAmount'] == null || 
+      projectData['targetAmount'] == null) {
+    return Card(
+      child: Center(child: Text('Invalid Project')),
+    );
+  }
     // Check if the project has an image, otherwise use a default placeholder
     String imageUrl = (projectData['media']?['images'] as List?)?.isNotEmpty == true
         ? projectData['media']['images'][0]
@@ -164,7 +181,11 @@ class _BrowseProjectsState extends State<BrowseProjects> {
 
     return InkWell( // Make the entire card tappable
       onTap: () {
-        context.go('/investor/project-details', extra: projectData['projectId']);
+        if (projectData['projectId'] != null && projectData['projectId'].toString().isNotEmpty) {
+          context.go('/investor/project-details', extra: projectData['projectId']);
+        } else {
+          print('Error: projectId is null or empty');
+        }
       },
       child: Card(
         margin: const EdgeInsets.all(8),
