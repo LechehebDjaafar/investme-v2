@@ -108,7 +108,7 @@ class InvestorProfile extends StatelessWidget {
                 // Edit Profile Button
                 ElevatedButton(
                                               onPressed: () {
-                              context.go('/investor/ivestme_EditProfile.dart');
+                              
                             },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, backgroundColor: const Color(0xFF065A94),
