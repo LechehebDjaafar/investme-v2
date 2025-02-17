@@ -64,20 +64,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             context.go('/entrepreneur/main');
           } else {
             // If the role is unknown, go to login screen
-            context.go('/login');
+            context.go('/splash');
           }
         } else {
           // If user data is not found, go to login screen
-          context.go('/login');
+          context.go('/splash');
         }
       } catch (e) {
         // Handle errors and go to login screen
         print('Error fetching user data: $e');
-        context.go('/login');
+        context.go('/splash');
       }
     } else {
       // User is not logged in, go to login screen
-      context.go('/login');
+      context.go('/splash');
     }
   }
 
