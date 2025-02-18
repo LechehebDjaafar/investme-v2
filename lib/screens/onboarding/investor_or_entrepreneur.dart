@@ -28,27 +28,29 @@ class _InvestorOrEntrepreneurScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A47), // خلفية أزرق داكن
+      backgroundColor: const Color(0xFFFFFFFF), // خلفية بيضاء
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
+            // عنوان الصفحة
             Text(
               "Choose your role",
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // نص أبيض
+                color: const Color(0xFF032D64), // أزرق داكن
               ),
             ),
             const SizedBox(height: 10),
+            // وصف الصفحة
             Text(
               "Are you an investor or an entrepreneur?",
               style: GoogleFonts.poppins(
                 fontSize: 16,
-                color: Colors.white70, // نص رمادي فاتح
+                color: const Color(0xFF49AEEF), // أزرق فاتح
               ),
             ),
             const SizedBox(height: 40),
@@ -80,7 +82,7 @@ class _InvestorOrEntrepreneurScreenState
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF4B400), // زر ذهبي
+                backgroundColor: const Color(0xFF065A94), // زر أزرق متوسط
                 foregroundColor: Colors.white, // نص أبيض
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 shape: RoundedRectangleBorder(
@@ -111,10 +113,14 @@ class _InvestorOrEntrepreneurScreenState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: selectedRole == role ? const Color(0xFFF4B400) : Colors.grey[200],
+          color: selectedRole == role
+              ? const Color(0xFF065A94) // زر أزرق متوسط عند الاختيار
+              : const Color(0xFFF5F5F5), // خلفية رمادية فاتحة عند عدم الاختيار
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: selectedRole == role ? const Color(0xFFF4B400) : Colors.transparent,
+            color: selectedRole == role
+                ? const Color(0xFF065A94) // حدود زرقاء متوسطة عند الاختيار
+                : Colors.transparent,
             width: 2,
           ),
         ),
@@ -124,7 +130,9 @@ class _InvestorOrEntrepreneurScreenState
             Icon(
               icon,
               size: 30,
-              color: selectedRole == role ? Colors.white : Colors.black54,
+              color: selectedRole == role
+                  ? Colors.white // أيقونة بيضاء عند الاختيار
+                  : const Color(0xFF032D64), // أيقونة زرقاء داكنة عند عدم الاختيار
             ),
             const SizedBox(width: 10),
             Text(
@@ -132,7 +140,9 @@ class _InvestorOrEntrepreneurScreenState
               style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: selectedRole == role ? Colors.white : Colors.black87,
+                color: selectedRole == role
+                    ? Colors.white // نص أبيض عند الاختيار
+                    : const Color(0xFF032D64), // نص زرقاء داكنة عند عدم الاختيار
               ),
             ),
           ],

@@ -28,7 +28,6 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
@@ -39,27 +38,29 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A47), // خلفية أزرق داكن
+      backgroundColor: const Color(0xFFFFFFFF), // خلفية بيضاء
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
+            // عنوان الصفحة
             Text(
               "Tell us about yourself",
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // نص أبيض
+                color: const Color(0xFF032D64), // أزرق داكن
               ),
             ),
             const SizedBox(height: 10),
+            // وصف الصفحة
             Text(
               "Select your date of birth and gender to continue",
               style: GoogleFonts.poppins(
                 fontSize: 16,
-                color: Colors.white70, // نص رمادي فاتح
+                color: const Color(0xFF49AEEF), // أزرق فاتح
               ),
             ),
             const SizedBox(height: 40),
@@ -69,7 +70,7 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white54),
+                  border: Border.all(color: const Color(0xFFE8F1FA)), // حدود زرقاء فاتحة
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -80,11 +81,13 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
                           ? "Select your date of birth"
                           : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
                       style: TextStyle(
-                        color: selectedDate == null ? Colors.white70 : Colors.white,
+                        color: selectedDate == null
+                            ? const Color(0xFF49AEEF) // أزرق فاتح
+                            : const Color(0xFF032D64), // أزرق داكن
                         fontSize: 16,
                       ),
                     ),
-                    Icon(Icons.calendar_today, color: Colors.white70),
+                    Icon(Icons.calendar_today, color: const Color(0xFF49AEEF)), // أيقونة زرقاء فاتحة
                   ],
                 ),
               ),
@@ -116,7 +119,7 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
                     }
                   : null, // عطل الزر إذا لم يتم اختيار التاريخ أو الجنس
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF4B400), // زر ذهبي
+                backgroundColor: const Color(0xFF065A94), // زر أزرق متوسط
                 foregroundColor: Colors.white, // نص أبيض
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 shape: RoundedRectangleBorder(
@@ -147,10 +150,14 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: selectedGender == gender ? const Color(0xFFF4B400) : Colors.grey[200],
+          color: selectedGender == gender
+              ? const Color(0xFF065A94) // زر أزرق متوسط عند الاختيار
+              : const Color(0xFFF5F5F5), // خلفية رمادية فاتحة عند عدم الاختيار
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: selectedGender == gender ? const Color(0xFFF4B400) : Colors.transparent,
+            color: selectedGender == gender
+                ? const Color(0xFF065A94) // حدود زرقاء متوسطة عند الاختيار
+                : Colors.transparent,
             width: 2,
           ),
         ),
@@ -160,7 +167,9 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
             Icon(
               icon,
               size: 40,
-              color: selectedGender == gender ? Colors.white : Colors.black54,
+              color: selectedGender == gender
+                  ? Colors.white // أيقونة بيضاء عند الاختيار
+                  : const Color(0xFF032D64), // أيقونة زرقاء داكنة عند عدم الاختيار
             ),
             const SizedBox(height: 5),
             Text(
@@ -168,7 +177,9 @@ class _AgeGenderScreenState extends State<AgeGenderScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: selectedGender == gender ? Colors.white : Colors.black87,
+                color: selectedGender == gender
+                    ? Colors.white // نص أبيض عند الاختيار
+                    : const Color(0xFF032D64), // نص زرقاء داكنة عند عدم الاختيار
               ),
             ),
           ],

@@ -113,27 +113,29 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+      backgroundColor: const Color(0xFFFFFFFF), // White background
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
+            // Title
             Text(
               "Create your account",
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // White text
+                color: const Color(0xFF032D64), // Dark blue text
               ),
             ),
             const SizedBox(height: 10),
+            // Description
             Text(
               "Enter your email and create a password to complete registration.",
               style: GoogleFonts.poppins(
                 fontSize: 16,
-                color: Colors.white70, // Light gray text
+                color: const Color(0xFF49AEEF), // Light blue text
               ),
             ),
             const SizedBox(height: 40),
@@ -141,15 +143,15 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: TextStyle(color: Colors.white), // White text
+              style: TextStyle(color: const Color(0xFF032D64)), // Dark blue text
               decoration: InputDecoration(
                 labelText: "Email",
-                labelStyle: TextStyle(color: Colors.white70), // Light gray text
+                labelStyle: TextStyle(color: const Color(0xFF49AEEF)), // Light blue text
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white54), // Gray border
+                  borderSide: BorderSide(color: const Color(0xFFE8F1FA)), // Light blue border
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xFF4A90E2)), // Light blue border
+                  borderSide: BorderSide(color: const Color(0xFF065A94)), // Medium blue border
                 ),
               ),
             ),
@@ -158,15 +160,15 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
             TextField(
               controller: _passwordController,
               obscureText: true,
-              style: TextStyle(color: Colors.white), // White text
+              style: TextStyle(color: const Color(0xFF032D64)), // Dark blue text
               decoration: InputDecoration(
                 labelText: "Password",
-                labelStyle: TextStyle(color: Colors.white70), // Light gray text
+                labelStyle: TextStyle(color: const Color(0xFF49AEEF)), // Light blue text
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white54), // Gray border
+                  borderSide: BorderSide(color: const Color(0xFFE8F1FA)), // Light blue border
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xFF4A90E2)), // Light blue border
+                  borderSide: BorderSide(color: const Color(0xFF065A94)), // Medium blue border
                 ),
               ),
             ),
@@ -175,7 +177,7 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
             ElevatedButton(
               onPressed: () => _createAccount(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF4B400), // Gold button
+                backgroundColor: const Color(0xFF065A94), // Medium blue button
                 foregroundColor: Colors.white, // White text
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 shape: RoundedRectangleBorder(

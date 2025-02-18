@@ -90,19 +90,20 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A47), // Dark blue background
+      backgroundColor: const Color(0xFFFFFFFF), // White background
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 60),
+            // Welcome message
             Text(
               "Welcome back!",
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // White text
+                color: const Color(0xFF032D64), // Dark blue text
               ),
             ),
             const SizedBox(height: 10),
@@ -110,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "Sign in to continue to InvestMe.",
               style: GoogleFonts.poppins(
                 fontSize: 16,
-                color: Colors.white70, // Light gray text
+                color: const Color(0xFF49AEEF), // Light blue text
               ),
             ),
             const SizedBox(height: 40),
@@ -118,15 +119,15 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: TextStyle(color: Colors.white), // White text
+              style: TextStyle(color: const Color(0xFF032D64)), // Dark blue text
               decoration: InputDecoration(
                 labelText: "Email",
-                labelStyle: TextStyle(color: Colors.white70), // Light gray text
+                labelStyle: TextStyle(color: const Color(0xFF49AEEF)), // Light blue text
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white54), // Gray border
+                  borderSide: BorderSide(color: const Color(0xFFE8F1FA)), // Light blue border
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xFF4A90E2)), // Light blue border
+                  borderSide: BorderSide(color: const Color(0xFF065A94)), // Medium blue border
                 ),
               ),
             ),
@@ -135,15 +136,15 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _passwordController,
               obscureText: true,
-              style: TextStyle(color: Colors.white), // White text
+              style: TextStyle(color: const Color(0xFF032D64)), // Dark blue text
               decoration: InputDecoration(
                 labelText: "Password",
-                labelStyle: TextStyle(color: Colors.white70), // Light gray text
+                labelStyle: TextStyle(color: const Color(0xFF49AEEF)), // Light blue text
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white54), // Gray border
+                  borderSide: BorderSide(color: const Color(0xFFE8F1FA)), // Light blue border
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: const Color(0xFF4A90E2)), // Light blue border
+                  borderSide: BorderSide(color: const Color(0xFF065A94)), // Medium blue border
                 ),
               ),
             ),
@@ -158,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Forgot Password?",
                   style: GoogleFonts.poppins(
                     fontSize: 16,
-                    color: const Color(0xFFF4B400), // Gold text
+                    color: const Color(0xFF00C853), // Green text
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -169,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: () => _login(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF4B400), // Gold button
+                backgroundColor: const Color(0xFF065A94), // Medium blue button
                 foregroundColor: Colors.white, // White text
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 shape: RoundedRectangleBorder(
@@ -190,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Don't have an account? ",
                   style: GoogleFonts.poppins(
                     fontSize: 16,
-                    color: Colors.white70, // Light gray text
+                    color: const Color(0xFF49AEEF), // Light blue text
                   ),
                 ),
                 TextButton(
@@ -202,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Create Account",
                     style: GoogleFonts.poppins(
                       fontSize: 16,
-                      color: const Color(0xFFF4B400), // Gold text
+                      color: const Color(0xFF065A94), // Medium blue text
                       fontWeight: FontWeight.w600,
                     ),
                   ),
