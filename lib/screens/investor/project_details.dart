@@ -361,92 +361,118 @@ class ProjectDetails extends StatelessWidget {
     );
   }
 
-  void _processInvestment(double amount, BuildContext context) async {
-    try {
-      final FirebaseAuth _auth = FirebaseAuth.instance;
-      final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+void _processInvestment(double amount, BuildContext context) async {
+  try {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-      final User? user = _auth.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('User not authenticated',
-                style: GoogleFonts.poppins(color: Colors.white)),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      if (projectId == null || projectId!.isEmpty) {
-        throw Exception('Invalid or missing project ID');
-      }
-
-      final projectSnapshot =
-          await _firestore.collection('projects').doc(projectId).get();
-      if (!projectSnapshot.exists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Project not found',
-                style: GoogleFonts.poppins(color: Colors.white)),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      Map<String, dynamic> projectData = projectSnapshot.data()!;
-      final double currentAmount =
-          (projectData['currentAmount'] ?? 0).toDouble();
-      final double targetAmount = (projectData['targetAmount'] ?? 0).toDouble();
-
-      final newCurrentAmount = currentAmount + amount;
-      if (newCurrentAmount > targetAmount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Investment exceeds the target amount',
-                style: GoogleFonts.poppins(color: Colors.white)),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      await _firestore.collection('projects').doc(projectId).update({
-        'currentAmount': newCurrentAmount,
-      });
-
-      final userSnapshot =
-          await _firestore.collection('users').doc(user.uid).get();
-      if (userSnapshot.exists) {
-        final List<dynamic> investedProjects =
-            List.from(userSnapshot.data()?['investedProjects'] ?? []);
-        if (!investedProjects.contains(projectId)) {
-          investedProjects.add(projectId);
-          await _firestore.collection('users').doc(user.uid).update({
-            'investedProjects': investedProjects,
-            'totalInvestments': FieldValue.increment(amount),
-          });
-        }
-      }
-
+    final User? user = _auth.currentUser;
+    if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Investment successful!',
-              style: GoogleFonts.poppins(color: Colors.white)),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error processing investment: $e',
-              style: GoogleFonts.poppins(color: Colors.white)),
+          content: Text('User not authenticated', style: GoogleFonts.poppins(color: Colors.white)),
           backgroundColor: Colors.red,
         ),
       );
+      return;
     }
+
+    // Ensure projectId is valid
+    if (projectId == null || projectId!.isEmpty) {
+      throw Exception('Invalid or missing project ID');
+    }
+
+    // Fetch project details
+    final projectSnapshot = await _firestore.collection('projects').doc(projectId).get();
+    if (!projectSnapshot.exists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Project not found', style: GoogleFonts.poppins(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Map<String, dynamic> projectData = projectSnapshot.data()!;
+    final double currentAmount = (projectData['currentAmount'] ?? 0).toDouble();
+    final double targetAmount = (projectData['targetAmount'] ?? 0).toDouble();
+
+    // Update project's current amount
+    final newCurrentAmount = currentAmount + amount;
+    if (newCurrentAmount > targetAmount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Investment exceeds the target amount', style: GoogleFonts.poppins(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Update project in Firestore
+    await _firestore.collection('projects').doc(projectId).update({
+      'currentAmount': newCurrentAmount,
+    });
+
+    // Add project to user's invested projects
+    final userSnapshot = await _firestore.collection('users').doc(user.uid).get();
+    if (userSnapshot.exists) {
+      final List<dynamic> investedProjects = List.from(userSnapshot.data()?['investedProjects'] ?? []);
+      if (!investedProjects.contains(projectId)) {
+        investedProjects.add(projectId);
+
+        // Ensure notifications field exists before adding a new notification
+        await _ensureNotificationsField(user.uid);
+
+        // Add notification for the investment
+        await _firestore.collection('users').doc(user.uid).update({
+          'investedProjects': investedProjects,
+          'totalInvestments': FieldValue.increment(amount),
+          'notifications': FieldValue.arrayUnion([
+            {
+              'id': DateTime.now().millisecondsSinceEpoch.toString(),
+              'projectName': projectData['name'],
+              'investmentAmount': amount,
+              'timeAgo': 'Just now',
+              'isRead': false,
+            }
+          ]),
+        });
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Investment successful!', style: GoogleFonts.poppins(color: Colors.white)),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error processing investment: $e', style: GoogleFonts.poppins(color: Colors.white)),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
+// Function to ensure notifications field exists
+Future<void> _ensureNotificationsField(String userId) async {
+  try {
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (!userDoc.exists || !(userDoc.data()?['notifications'] is List)) {
+      // If the field doesn't exist or is not a list, initialize it as an empty list
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'notifications': [],
+      }, SetOptions(merge: true)); // Use merge to avoid overwriting other fields
+    }
+  } catch (e) {
+    print('Error ensuring notifications field: $e');
+  }
+}
 
   double _calculateFundingPercentage(
       dynamic currentAmount, dynamic targetAmount) {

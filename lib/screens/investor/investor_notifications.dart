@@ -1,65 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NotificationsScreen extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F1FA), // Updated light blue background
+      backgroundColor: const Color(0xFFE8F1FA), // Light blue background
       appBar: AppBar(
         title: Text(
           'Notifications',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF032D64), // Updated text color
+            color: const Color(0xFF032D64), // Dark blue text
           ),
         ),
-        backgroundColor: const Color(0xFFE8F1FA), // Updated app bar background
+        backgroundColor: const Color(0xFFE8F1FA), // Light blue app bar
         elevation: 0, // Remove shadow
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               // Clear all notifications logic here
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('All notifications cleared')),
-              );
+              try {
+                final user = _auth.currentUser;
+                if (user != null) {
+                  await _firestore.collection('users').doc(user.uid).update({
+                    'notifications': [], // Clear notifications array
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('All notifications cleared')),
+                  );
+                }
+              } catch (e) {
+                print('Error clearing notifications: $e');
+              }
             },
             icon: Icon(Icons.clear_all, color: const Color(0xFF032D64)), // Updated icon color
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: 5, // Example notification count
-          itemBuilder: (context, index) {
-            bool isRead = index % 2 == 0; // Example: Alternate read/unread status
+      body: FutureBuilder(
+        future: _fetchNotifications(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-            return Dismissible(
-              key: Key(index.toString()),
-              onDismissed: (direction) {
-                // Remove notification logic here
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Notification dismissed')),
-                );
-              },
-              background: Container(
-                color: Colors.red.withOpacity(0.2), // Background when swiping to dismiss
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.delete, color: Colors.red), // Delete icon
+          if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+            return Center(
+              child: Text(
+                'No notifications yet.',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: const Color(0xFF49AEEF), // Light blue text
+                ),
               ),
-              child: _buildNotificationCard(isRead,context),
             );
-          },
-        ),
+          }
+
+          List<Map<String, dynamic>> notifications = snapshot.data as List<Map<String, dynamic>>;
+
+          return ListView.builder(
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> notification = notifications[index];
+              bool isRead = notification['isRead'] ?? false;
+
+              return Dismissible(
+                key: Key(notification['id'].toString()),
+                onDismissed: (direction) async {
+                  try {
+                    final user = _auth.currentUser;
+                    if (user != null) {
+                      await _firestore.collection('users').doc(user.uid).update({
+                        'notifications': FieldValue.arrayRemove([notification]),
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Notification dismissed')),
+                      );
+                    }
+                  } catch (e) {
+                    print('Error dismissing notification: $e');
+                  }
+                },
+                background: Container(
+                  color: Colors.red.withOpacity(0.2), // Background when swiping to dismiss
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Icon(Icons.delete, color: Colors.red), // Delete icon
+                ),
+                child: _buildNotificationCard(isRead, notification, context),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
+  // Fetch notifications for the current user
+  Future<List<Map<String, dynamic>>> _fetchNotifications() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return [];
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) return [];
+
+      List<dynamic> notifications = userDoc.data()?['notifications'] ?? [];
+      return List<Map<String, dynamic>>.from(notifications);
+    } catch (e) {
+      print('Error fetching notifications: $e');
+      return [];
+    }
+  }
+
   // Build a notification card
-  Widget _buildNotificationCard(bool isRead,context) {
+  Widget _buildNotificationCard(bool isRead, Map<String, dynamic> notification, BuildContext context) {
+    String projectName = notification['projectName'] ?? 'Unnamed Project';
+    double investmentAmount = (notification['investmentAmount'] ?? 0).toDouble();
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       color: isRead ? const Color(0xFF1F87D2).withOpacity(0.1) : const Color(0xFF065A94).withOpacity(0.2), // Updated card colors
@@ -70,14 +135,14 @@ class NotificationsScreen extends StatelessWidget {
           color: isRead ? const Color(0xFF49AEEF) : Colors.white, // Updated icon color
         ),
         title: Text(
-          'New Investment Opportunity',
+          'Investment in $projectName',
           style: GoogleFonts.poppins(
             fontSize: 16,
             color: isRead ? const Color(0xFF49AEEF) : Colors.white, // Updated text color
           ),
         ),
         subtitle: Text(
-          'You have a new investment opportunity in the Technology sector.',
+          'You invested \$${investmentAmount.toStringAsFixed(2)} in this project.',
           style: GoogleFonts.poppins(
             fontSize: 12,
             color: const Color(0xFF49AEEF), // Updated text color
@@ -97,7 +162,7 @@ class NotificationsScreen extends StatelessWidget {
               ),
             const SizedBox(width: 10),
             Text(
-              '10 min ago',
+              notification['timeAgo'] ?? 'Just now',
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 color: const Color(0xFF49AEEF), // Updated text color
@@ -105,11 +170,22 @@ class NotificationsScreen extends StatelessWidget {
             ),
           ],
         ),
-        onTap: () {
-          // Mark notification as read and navigate to details
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Notification marked as read')),
-          );
+        onTap: () async {
+          try {
+            final user = _auth.currentUser;
+            if (user != null) {
+              await _firestore.collection('users').doc(user.uid).update({
+                'notifications': FieldValue.arrayUnion([
+                  {...notification, 'isRead': true}
+                ]),
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Notification marked as read')),
+              );
+            }
+          } catch (e) {
+            print('Error marking notification as read: $e');
+          }
         },
       ),
     );
