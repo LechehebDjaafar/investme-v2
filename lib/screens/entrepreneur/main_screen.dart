@@ -40,7 +40,7 @@ class _MainStateManager extends State<MainScreen> {
         },
         selectedItemColor: const Color(0xFFF4B400), // برتقالي مشرق
         unselectedItemColor: const Color(0xFF888888), // رمادي
-        backgroundColor: const Color(0xFF1E2A47), // أزرق داكن
+        backgroundColor: const Color(0xFF2196F3), // أزرق داكن
         type: BottomNavigationBarType.fixed,
         elevation: 8, // ظل خفيف
         items: [

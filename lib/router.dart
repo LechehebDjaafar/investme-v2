@@ -13,8 +13,6 @@ import '/screens/auth/login.dart' as login;
 import 'screens/entrepreneur/dashboard.dart' as entrepreneurDashboard;
 import 'screens/entrepreneur/messages_screen.dart' as entrepreneurMessages;
 import 'screens/entrepreneur/notifications_screen.dart' as entrepreneurNotifications;
-import 'screens/entrepreneur/settings_screen.dart' as entrepreneurSettings;
-import 'screens/entrepreneur/add_project.dart' as entrepreneurAddProject;
 import 'splashscreen.dart' as splash1; // Removed incorrect import
 // إضافة مستوردات لجزء المستثمر
 import 'screens/investor/investor_main_screen.dart' as investorMainScreen;
@@ -146,20 +144,6 @@ final GoRouter router = GoRouter(
       path: '/entrepreneur/notifications',
       name: 'entrepreneur-notifications',
       builder: (context, state) => entrepreneurNotifications.NotificationsScreen(),
-    ),
-
-    // الإعدادات (Settings)
-    GoRoute(
-      path: '/entrepreneur/settings',
-      name: 'entrepreneur-settings',
-      builder: (context, state) => entrepreneurSettings.SettingsScreen(),
-    ),
-
-    // إضافة مشروع جديد (Add Project)
-    GoRoute(
-      path: '/entrepreneur/add-project',
-      name: 'entrepreneur-add-project',
-      builder: (context, state) => entrepreneurAddProject.AddProjectScreen(),
     ),
 
     // ================== Investor Screens ==================

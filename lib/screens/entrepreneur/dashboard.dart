@@ -201,7 +201,7 @@ class StatCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: const Color(0xFF42A5F5), // أزرق متوسط فاتح
+              color: const Color.fromARGB(255, 244, 247, 249), // أزرق متوسط فاتح
             ),
           ),
         ],

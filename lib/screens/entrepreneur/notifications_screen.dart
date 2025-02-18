@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationsScreen extends StatelessWidget {
   @override
@@ -6,23 +7,72 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFFE8F0FE), // خلفية عامة
       appBar: AppBar(
-        backgroundColor: Color(0xFF1A237E), // أزرق داكن غني
+        backgroundColor: Color(0xFF2196F3), // أزرق داكن غني
         title: Text('Notifications', style: TextStyle(color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.mark_email_unread, color: Colors.white), // أيقونة الرسائل غير المقروءة
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Mark all notifications as read')),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: 5, // Example: Display 5 notifications
-          itemBuilder: (context, index) {
-            return NotificationTile(
-              title: 'Project Approved',
-              subtitle: 'Your project "Eco App" has been approved!',
-              timestamp: '3 hours ago',
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text(
+                  'No notifications yet.\nStay tuned for updates!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final notification = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                final isRead = notification['isRead'] ?? false; // Check if the notification is read
+
+                return NotificationTile(
+                  title: notification['title'],
+                  subtitle: notification['subtitle'],
+                  timestamp: notification['timestamp'],
+                  icon: getNotificationIcon(notification['type']),
+                  isRead: isRead, // Pass the isRead status to the tile
+                );
+              },
             );
           },
         ),
       ),
     );
+  }
+
+  IconData getNotificationIcon(String? type) {
+    switch (type) {
+      case 'investment':
+        return Icons.monetization_on;
+      case 'post':
+        return Icons.post_add;
+      case 'project_accepted':
+        return Icons.check_circle_outline;
+      case 'project_rejected':
+        return Icons.cancel_outlined;
+      default:
+        return Icons.notifications;
+    }
   }
 }
 
@@ -31,11 +81,15 @@ class NotificationTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final String timestamp;
+  final IconData icon;
+  final bool isRead; // Add a flag to indicate if the notification is read
 
   const NotificationTile({
     required this.title,
     required this.subtitle,
     required this.timestamp,
+    required this.icon,
+    required this.isRead,
   });
 
   @override
@@ -43,14 +97,15 @@ class NotificationTile extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10), // زوايا مستديرة
+        borderRadius: BorderRadius.circular(isRead ? 10 : 15), // Round corners more for unread notifications
       ),
-      elevation: 4, // ظل خفيف
+      elevation: isRead ? 4 : 8, // Higher elevation for unread notifications
+      color: isRead ? null : Colors.blue.shade50, // Light background for unread notifications
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         leading: Icon(
-          Icons.notifications,
-          color: Color(0xFF2196F3), // أزرق مشرق
+          icon,
+          color: isRead ? Color(0xFF2196F3) : Colors.redAccent, // Change icon color for unread notifications
           size: 30,
         ),
         title: Text(
@@ -58,22 +113,36 @@ class NotificationTile extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1A237E), // أزرق داكن غني
+            color: isRead ? Color(0xFF1A237E) : Colors.redAccent, // Change text color for unread notifications
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
             fontSize: 14,
-            color: Color(0xFF42A5F5), // نصوص ثانوية
+            color: isRead ? Color(0xFF42A5F5) : Colors.redAccent, // Change subtitle color for unread notifications
           ),
         ),
-        trailing: Text(
-          timestamp,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              timestamp,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            if (!isRead) // Show a small dot for unread notifications
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.redAccent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
         ),
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,6 +45,22 @@ class ProjectDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Project Main Image (with default image if none provided)
+            Container(
+              width: double.infinity,
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: project['media']['images'] != null && project['media']['images'].isNotEmpty
+                      ? MemoryImage(base64Decode(project['media']['images'][0])) // Decode first image
+                      : AssetImage('assets/default_project_image.jpg') as ImageProvider, // Default image
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
             // Project Name
             Text(
               project['name'],
@@ -53,6 +71,47 @@ class ProjectDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
+
+            // Number of Investors
+            Row(
+              children: [
+                Icon(Icons.group, color: const Color(0xFF42A5F5), size: 18),
+                const SizedBox(width: 5),
+                Text(
+                  'Investors: ${project['investorCount'] ?? 0}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: const Color(0xFF42A5F5), // Light Blue
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Completion Percentage with Progress Bar
+            Text(
+              'Completion:',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1A237E), // Dark Blue
+              ),
+            ),
+            LinearProgressIndicator(
+              value: project['completionPercentage'] / 100,
+              backgroundColor: const Color(0xFFE8F0FE), // Light Blue Background
+              valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF2196F3)), // Bright Blue Progress
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '${project['completionPercentage']}%',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: const Color(0xFF42A5F5), // Light Blue
+              ),
+            ),
+            const SizedBox(height: 20),
+
             // Category
             Text(
               'Category: ${project['category']}',
@@ -62,6 +121,7 @@ class ProjectDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
+
             // Description
             Text(
               'Description:',
@@ -79,6 +139,7 @@ class ProjectDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+
             // Target Amount
             Text(
               'Target Amount: ${project['targetAmount']} \$',
@@ -88,15 +149,7 @@ class ProjectDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            // Completion Percentage
-            Text(
-              'Completion Percentage: ${project['completionPercentage']}%',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: const Color(0xFF42A5F5), // Light Blue
-              ),
-            ),
-            const SizedBox(height: 10),
+
             // Current Amount
             Text(
               'Current Amount: ${project['currentAmount']} \$',
@@ -106,6 +159,7 @@ class ProjectDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
+
             // Status
             Chip(
               label: Text(
@@ -119,13 +173,14 @@ class ProjectDetailsScreen extends StatelessWidget {
               backgroundColor: getStatusColor(project['status']),
             ),
             const SizedBox(height: 20),
-            // Media Section
-            if (project['media']['images'] != null && project['media']['images'].isNotEmpty)
+
+            // Additional Images (if any)
+            if (project['media']['images'] != null && project['media']['images'].length > 1)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Images:',
+                    'Additional Images:',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -137,11 +192,13 @@ class ProjectDetailsScreen extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: List.generate(
-                      project['media']['images'].length,
+                      project['media']['images'].length > 1
+                          ? project['media']['images'].length - 1
+                          : 0,
                       (index) => ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          project['media']['images'][index],
+                        child: Image.memory(
+                          base64Decode(project['media']['images'][index + 1]), // Decode additional images
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -152,6 +209,8 @@ class ProjectDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                 ],
               ),
+
+            // PDF and Video Buttons (if available)
             if (project['media']['pdf'] != null && project['media']['pdf'].isNotEmpty)
               ElevatedButton(
                 onPressed: () {

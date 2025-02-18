@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart'; // Import for image picking
+import 'dart:io'; // For File handling
+import 'dart:convert'; // For base64 encoding
 
 class AddProjectScreen extends StatefulWidget {
   @override
@@ -23,12 +26,27 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   String _pdf = '';
   String _video = '';
 
+  // Image picker instance
+  final ImagePicker _picker = ImagePicker();
+
+  // Function to pick an image and convert it to Base64
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final File file = File(pickedFile.path);
+      final bytes = await file.readAsBytes();
+      setState(() {
+        _images.add(base64Encode(bytes)); // Convert image to Base64 and add to list
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFE8F0FE), // خلفية عامة
       appBar: AppBar(
-        backgroundColor: Color(0xFF1A237E), // أزرق داكن غني
+        backgroundColor: Color(0xFF2196F3), // أزرق داكن غني
         title: Text('Add New Project', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
@@ -284,13 +302,10 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
 
               // إضافة صور
               ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _images.add('https://example.com/image.jpg'); // Example
-                  });
-                },
+                onPressed: _pickImage, // Call the image picker function
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF2196F3),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xFF2196F3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // زوايا مستديرة
                   ),
@@ -302,7 +317,20 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              ..._images.map((image) => ListTile(title: Text(image))).toList(),
+              if (_images.isNotEmpty)
+                Column(
+                  children: _images.map((image) => ListTile(
+                    title: Text('Image added'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _images.remove(image); // Remove image from list
+                        });
+                      },
+                    ),
+                  )).toList(),
+                ),
               SizedBox(height: 16),
 
               // رابط PDF وفيديو
@@ -373,7 +401,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF2196F3),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xFF2196F3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // زوايا مستديرة
                   ),
@@ -410,7 +439,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
         'currentAmount': _currentAmount,
         'investorCount': _investorCount,
         'media': {
-          'images': _images,
+          'images': _images, // Save images as Base64 strings
           'pdf': _pdf,
           'video': _video,
         },
@@ -422,15 +451,17 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
       DocumentReference docRef = await _db.collection('projects').add(projectData);
       await docRef.update({'projectId': docRef.id});
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Project saved successfully!', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xFF00C853),),
-         // أخضر فاتح
+        SnackBar(
+          content: Text('Project saved successfully!', style: TextStyle(color: Colors.white)),
+          backgroundColor: Color(0xFF00C853), // أخضر فاتح
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save project: $e', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red,),
-        
+        SnackBar(
+          content: Text('Failed to save project: $e', style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
