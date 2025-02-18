@@ -211,53 +211,23 @@ class ProjectDetails extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // Invest Now Button
-ElevatedButton(
-  onPressed: () async {
-    try {
-      // Increment investor count by 1
-      await FirebaseFirestore.instance.collection('projects').doc(projectId).update({
-        'investorCount': FieldValue.increment(1),
-        'currentAmount': FieldValue.increment(100),
-      });
-
-      // Update user's invested projects
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'investedProjects': FieldValue.arrayUnion([projectId]),
-        'totalInvestments': FieldValue.increment(100),
-      });
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Investment successful')),
-      );
-
-      // Navigate to Dashboard after a short delay (optional)
-      Future.delayed(const Duration(seconds: 2), () {
-        context.go('/investor/dashboard'); // Use GoRouter to navigate to the dashboard
-      });
-    } catch (e) {
-      print('Error updating investment: $e'); // Log the error for debugging
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error investing: $e')),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor: Color(0xFF065A94),
-    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    elevation: 4,
-    shadowColor: Colors.black.withOpacity(0.2),
-  ),
-  child: Text(
-    'Invest Now',
-    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
-  ),
-),
+                ElevatedButton(
+                  onPressed: () {
+                    _showInvestmentDialog(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFF065A94),
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    elevation: 4,
+                    shadowColor: Colors.black.withOpacity(0.2),
+                  ),
+                  child: Text(
+                    'Invest Now',
+                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                ),
                 ],
               ),
             ),
@@ -267,6 +237,143 @@ ElevatedButton(
     );
   }
 
+
+  void _showInvestmentDialog(BuildContext context) {
+  final TextEditingController _amountController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: Text(
+          'Enter Investment Amount',
+          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF032D64)),
+        ),
+        content: TextField(
+          controller: _amountController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: 'Amount (\$)',
+            labelStyle: TextStyle(color: Color(0xFF49AEEF)), // Light blue text
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(); // Close the dialog
+            },
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.red), // Red text for cancel
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final String amount = _amountController.text.trim();
+              if (amount.isNotEmpty && double.tryParse(amount) != null) {
+                // Process the investment amount
+                _processInvestment(double.parse(amount),context);
+                Navigator.of(dialogContext).pop(); // Close the dialog
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter a valid amount', style: GoogleFonts.poppins(color: Colors.white)),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: Text(
+              'Confirm',
+              style: GoogleFonts.poppins(fontSize: 16, color: Color(0xFF00C853)), // Green text for confirm
+            ),
+          ),
+        ],
+      );
+    },
+  );
+} 
+
+  void _processInvestment(double amount,BuildContext context) async {
+  try {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+    final User? user = _auth.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('User not authenticated', style: GoogleFonts.poppins(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final String projectId = ModalRoute.of(context)?.settings.arguments as String;
+
+    // Fetch project details
+    final projectSnapshot = await _firestore.collection('projects').doc(projectId).get();
+    if (!projectSnapshot.exists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Project not found', style: GoogleFonts.poppins(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final Map<String, dynamic> projectData = projectSnapshot.data()!;
+    final double currentAmount = (projectData['currentAmount'] ?? 0).toDouble();
+    final double targetAmount = (projectData['targetAmount'] ?? 0).toDouble();
+
+    // Update project's current amount
+    final newCurrentAmount = currentAmount + amount;
+    if (newCurrentAmount > targetAmount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Investment exceeds the target amount', style: GoogleFonts.poppins(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Update project in Firestore
+    await _firestore.collection('projects').doc(projectId).update({
+      'currentAmount': newCurrentAmount,
+    });
+
+    // Add project to user's invested projects
+    final userSnapshot = await _firestore.collection('users').doc(user.uid).get();
+    if (userSnapshot.exists) {
+      final List<dynamic> investedProjects = List.from(userSnapshot.data()?['investedProjects'] ?? []);
+      if (!investedProjects.contains(projectId)) {
+        investedProjects.add(projectId);
+        await _firestore.collection('users').doc(user.uid).update({
+          'investedProjects': investedProjects,
+          'totalInvestments': FieldValue.increment(amount),
+        });
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Investment successful!', style: GoogleFonts.poppins(color: Colors.white)),
+        backgroundColor: Colors.green,
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error processing investment: $e', style: GoogleFonts.poppins(color: Colors.white)),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
   // Calculate funding percentage
   double _calculateFundingPercentage(dynamic currentAmount, dynamic targetAmount) {
     try {

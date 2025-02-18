@@ -12,7 +12,7 @@ class InvestorDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE8F1FA), // Light blue background
-appBar: AppBar(
+      appBar: AppBar(
         title: Text(
           'Investor Dashboard',
           style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF032D64)), // Dark blue text
@@ -38,7 +38,7 @@ appBar: AppBar(
                   }
 
                   Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
-                  int investedProjectsCount = userData['investedProjects']?.length ?? 0;
+                  int investedProjectsCount = (userData['investedProjects'] as List?)?.length ?? 0;
                   double totalInvestments = (userData['totalInvestments'] ?? 0).toDouble();
                   double expectedReturns = (userData['expectedReturns'] ?? 0).toDouble();
 
@@ -62,9 +62,10 @@ appBar: AppBar(
 
                       // Browse Projects Button
                       ElevatedButton(
-                        onPressed: () => Navigator.pushNamed(context, '/browse_projects'),
+                        onPressed: () => context.go('/browse_projects'), // Use GoRouter for navigation
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white, backgroundColor: const Color(0xFF065A94),
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF065A94),
                           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           elevation: 4,
@@ -98,8 +99,8 @@ appBar: AppBar(
           ),
 
           // Invested Projects Grid
-          StreamBuilder<QuerySnapshot>(
-            stream: _firestore.collection('projects').where('investors', arrayContains: _auth.currentUser!.uid).snapshots(),
+          FutureBuilder<DocumentSnapshot>(
+            future: _firestore.collection('users').doc(_auth.currentUser!.uid).get(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SliverToBoxAdapter(
@@ -107,30 +108,56 @@ appBar: AppBar(
                 );
               }
 
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('No user data found', style: TextStyle(color: Color(0xFF032D64)))),
+                );
+              }
+
+              Map<String, dynamic> userData = snapshot.data!.data() as Map<String, dynamic>;
+              List<String> investedProjectIds = List<String>.from(userData['investedProjects'] ?? []);
+
+              if (investedProjectIds.isEmpty) {
                 return SliverToBoxAdapter(
                   child: Center(child: Text('No invested projects yet', style: TextStyle(color: Color(0xFF032D64)))),
                 );
               }
 
-              List<Map<String, dynamic>> investedProjects = snapshot.data!.docs
-                  .map((doc) => doc.data() as Map<String, dynamic>)
-                  .toList();
+              return StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('projects').where(FieldPath.documentId, whereIn: investedProjectIds).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
 
-              return SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    Map<String, dynamic> projectData = investedProjects[index];
-                    return _buildProjectCard(context, projectData);
-                  },
-                  childCount: investedProjects.length,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Two columns in the grid
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.8, // Adjust card aspect ratio
-                ),
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return SliverToBoxAdapter(
+                      child: Center(child: Text('No invested projects yet', style: TextStyle(color: Color(0xFF032D64)))),
+                    );
+                  }
+
+                  List<Map<String, dynamic>> investedProjects = snapshot.data!.docs
+                      .map((doc) => doc.data() as Map<String, dynamic>)
+                      .toList();
+
+                  return SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        Map<String, dynamic> projectData = investedProjects[index];
+                        return _buildProjectCard(context, projectData);
+                      },
+                      childCount: investedProjects.length,
+                    ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Two columns in the grid
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.8, // Adjust card aspect ratio
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -212,7 +239,7 @@ appBar: AppBar(
                   height: 120,
                   fit: BoxFit.cover,
                 ),
-              ), 
+              ),
             ),
             const SizedBox(height: 10),
 
