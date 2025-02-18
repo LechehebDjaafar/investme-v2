@@ -38,26 +38,31 @@ class _MainStateManager extends State<MainScreen> {
             _currentIndex = index;
           });
         },
-        selectedItemColor: const Color(0xFFF4B400),
-        unselectedItemColor: const Color(0xFF888888),
-        backgroundColor: const Color(0xFF1E2A47),
+        selectedItemColor: const Color(0xFFF4B400), // برتقالي مشرق
+        unselectedItemColor: const Color(0xFF888888), // رمادي
+        backgroundColor: const Color(0xFF1E2A47), // أزرق داكن
         type: BottomNavigationBarType.fixed,
+        elevation: 8, // ظل خفيف
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, size: 26), // زيادة حجم الأيقونة
             label: 'Home',
+            activeIcon: Icon(Icons.home, size: 28, color: Color(0xFFF4B400)), // أيقونة محددة أكبر
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
+            icon: Icon(Icons.message, size: 26),
             label: 'Messages',
+            activeIcon: Icon(Icons.message, size: 28, color: Color(0xFFF4B400)),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: Icon(Icons.notifications, size: 26),
             label: 'Notifications',
+            activeIcon: Icon(Icons.notifications, size: 28, color: Color(0xFFF4B400)),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, size: 26),
             label: 'Profile',
+            activeIcon: Icon(Icons.person, size: 28, color: Color(0xFFF4B400)),
           ),
         ],
       ),

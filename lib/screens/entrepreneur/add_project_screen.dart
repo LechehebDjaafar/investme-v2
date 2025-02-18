@@ -9,29 +9,27 @@ class AddProjectScreen extends StatefulWidget {
 
 class _AddProjectScreenState extends State<AddProjectScreen> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-  // Keys for Form Validation
   final _formKey = GlobalKey<FormState>();
-
-  // Controllers for text fields
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _targetAmountController = TextEditingController();
   final TextEditingController _expectedCompletionDateController = TextEditingController();
 
-  double _completionPercentage = 0; // Default completion percentage
-  double _currentAmount = 0; // Default current amount
-  int _investorCount = 0; // Default investor count
-  List<String> _images = []; // List of image URLs
-  String _pdf = ''; // PDF URL
-  String _video = ''; // Video URL
+  double _completionPercentage = 0;
+  double _currentAmount = 0;
+  int _investorCount = 0;
+  List<String> _images = [];
+  String _pdf = '';
+  String _video = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE8F0FE), // خلفية عامة
       appBar: AppBar(
-        title: Text('Add New Project'),
+        backgroundColor: Color(0xFF1A237E), // أزرق داكن غني
+        title: Text('Add New Project', style: TextStyle(color: Colors.white)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,10 +37,28 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // Project Name (Required)
+              // اسم المشروع
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Project Name'),
+                decoration: InputDecoration(
+                  labelText: 'Project Name',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)), // نصوص ثانوية
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10), // زوايا مستديرة
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)), // أزرق مشرق
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a project name';
@@ -50,11 +66,30 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Category (Required)
+              // الفئة
               TextFormField(
                 controller: _categoryController,
-                decoration: InputDecoration(labelText: 'Category'),
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a category';
@@ -62,12 +97,31 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Description (Required)
+              // الوصف
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 3,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a description';
@@ -75,12 +129,31 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Target Amount (Required)
+              // المبلغ المستهدف
               TextFormField(
                 controller: _targetAmountController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Target Amount'),
+                decoration: InputDecoration(
+                  labelText: 'Target Amount',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty || double.tryParse(value) == null) {
                     return 'Please enter a valid target amount';
@@ -88,11 +161,30 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Expected Completion Date (Required)
+              // تاريخ الإكمال المتوقع
               TextFormField(
                 controller: _expectedCompletionDateController,
-                decoration: InputDecoration(labelText: 'Expected Completion Date'),
+                decoration: InputDecoration(
+                  labelText: 'Expected Completion Date',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 onTap: () async {
                   final DateTime? picked = await showDatePicker(
                     context: context,
@@ -114,84 +206,165 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Completion Percentage (Optional)
+              // نسبة الإكمال
               Slider(
                 value: _completionPercentage,
                 min: 0,
                 max: 100,
                 divisions: 100,
-                label: '${_completionPercentage.round()}%',
+                activeColor: Color(0xFF2196F3), // أزرق مشرق
+                inactiveColor: Colors.grey.shade300,
                 onChanged: (double value) {
                   setState(() {
                     _completionPercentage = value;
                   });
                 },
               ),
-              Text('Completion Percentage: ${_completionPercentage.round()}%'),
+              Text(
+                'Completion Percentage: ${_completionPercentage.round()}%',
+                style: TextStyle(fontSize: 14, color: Color(0xFF42A5F5)),
+              ),
+              SizedBox(height: 16),
 
-              // Current Amount (Optional)
+              // المبلغ الحالي
               Slider(
                 value: _currentAmount,
                 min: 0,
                 max: double.tryParse(_targetAmountController.text.isNotEmpty
-                    ? _targetAmountController.text
-                    : '0') ?? 0,
+                        ? _targetAmountController.text
+                        : '0') ??
+                    0,
                 divisions: 100,
-                label: '$_currentAmount',
+                activeColor: Color(0xFF2196F3),
+                inactiveColor: Colors.grey.shade300,
                 onChanged: (double value) {
                   setState(() {
                     _currentAmount = value;
                   });
                 },
               ),
-              Text('Current Amount: $_currentAmount'),
+              Text(
+                'Current Amount: $_currentAmount',
+                style: TextStyle(fontSize: 14, color: Color(0xFF42A5F5)),
+              ),
+              SizedBox(height: 16),
 
-              // Investor Count (Optional)
+              // عدد المستثمرين
               TextFormField(
                 initialValue: '0',
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Investor Count'),
+                decoration: InputDecoration(
+                  labelText: 'Investor Count',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _investorCount = int.tryParse(value) ?? 0;
                   });
                 },
               ),
+              SizedBox(height: 16),
 
-              // Images (Optional)
+              // إضافة صور
               ElevatedButton(
                 onPressed: () {
-                  // TODO: Implement image upload logic
                   setState(() {
                     _images.add('https://example.com/image.jpg'); // Example
                   });
                 },
-                child: Text('Add Image (Optional)'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Color(0xFF2196F3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // زوايا مستديرة
+                  ),
+                  elevation: 4, // ظل خفيف
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text(
+                  'Add Image (Optional)',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
               ..._images.map((image) => ListTile(title: Text(image))).toList(),
+              SizedBox(height: 16),
 
-              // PDF and Video (Optional)
+              // رابط PDF وفيديو
               TextFormField(
                 controller: TextEditingController(text: _pdf),
-                decoration: InputDecoration(labelText: 'PDF URL (Optional)'),
+                decoration: InputDecoration(
+                  labelText: 'PDF URL (Optional)',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _pdf = value;
                   });
                 },
               ),
+              SizedBox(height: 16),
+
               TextFormField(
                 controller: TextEditingController(text: _video),
-                decoration: InputDecoration(labelText: 'Video URL (Optional)'),
+                decoration: InputDecoration(
+                  labelText: 'Video URL (Optional)',
+                  labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _video = value;
                   });
                 },
               ),
+              SizedBox(height: 24),
 
-              // Save Button
+              // زر الحفظ
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
@@ -199,7 +372,18 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                     Navigator.pop(context); // Go back to dashboard
                   }
                 },
-                child: Text('Save Project'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Color(0xFF2196F3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // زوايا مستديرة
+                  ),
+                  elevation: 4, // ظل خفيف
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text(
+                  'Save Project',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
@@ -208,49 +392,46 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     );
   }
 
-Future<void> _saveProject() async {
-  try {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception('User is not logged in');
+  Future<void> _saveProject() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User is not logged in');
+      }
+      final entrepreneurId = user.uid;
+      final projectData = {
+        'name': _nameController.text,
+        'category': _categoryController.text,
+        'description': _descriptionController.text,
+        'targetAmount': double.tryParse(_targetAmountController.text) ?? 0,
+        'expectedCompletionDate': Timestamp.fromDate(
+            DateTime.parse(_expectedCompletionDateController.text)),
+        'completionPercentage': _completionPercentage,
+        'currentAmount': _currentAmount,
+        'investorCount': _investorCount,
+        'media': {
+          'images': _images,
+          'pdf': _pdf,
+          'video': _video,
+        },
+        'status': 'Under Review', // Default status
+        'entrepreneurId': entrepreneurId, // Link to the entrepreneur
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+      DocumentReference docRef = await _db.collection('projects').add(projectData);
+      await docRef.update({'projectId': docRef.id});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Project saved successfully!', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF00C853),),
+         // أخضر فاتح
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save project: $e', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,),
+        
+      );
     }
-
-    final entrepreneurId = user.uid;
-
-    final projectData = {
-      'name': _nameController.text,
-      'category': _categoryController.text,
-      'description': _descriptionController.text,
-      'targetAmount': double.tryParse(_targetAmountController.text) ?? 0,
-      'expectedCompletionDate': Timestamp.fromDate(
-          DateTime.parse(_expectedCompletionDateController.text)),
-      'completionPercentage': _completionPercentage,
-      'currentAmount': _currentAmount,
-      'investorCount': _investorCount,
-      'media': {
-        'images': _images,
-        'pdf': _pdf,
-        'video': _video,
-      },
-      'status': 'Under Review', // Default status
-      'entrepreneurId': entrepreneurId, // Link to the entrepreneur
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    };
-
-    // Add the project and get the document reference
-    DocumentReference docRef = await _db.collection('projects').add(projectData);
-
-    // Update the project with its projectId
-    await docRef.update({'projectId': docRef.id});
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Project saved successfully!')),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to save project: $e')),
-    );
   }
-}
 }

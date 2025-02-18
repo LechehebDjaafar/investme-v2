@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert'; // For base64 encoding/decoding
@@ -141,29 +140,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-    // Sign out function
-    Future<void> _signOut() async {
-      try {
-        await _auth.signOut();
-        // Navigate to splash screen after logout
-        if (!mounted) return; // Ensure the widget is still mounted
-        context.go('/splash'); // Use GoRouter's navigation method
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to sign out: $e')),
-        );
-      }
+  // Sign out function
+  Future<void> _signOut() async {
+    try {
+      await _auth.signOut();
+      Navigator.pushReplacementNamed(context, '/splash'); // Navigate to splash screen after logout
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign out: $e')),
+      );
     }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE8F0FE), // خلفية عامة
       appBar: AppBar(
-        title: Text('Profile'),
+        backgroundColor: Color(0xFF1A237E), // أزرق داكن غني
+        title: Text('Profile', style: TextStyle(color: Colors.white)),
         actions: [
           if (!_isEditing)
             IconButton(
-              icon: Icon(Icons.edit),
+              icon: Icon(Icons.edit, color: Colors.white),
               onPressed: () {
                 setState(() {
                   _isEditing = true; // Enter edit mode
@@ -172,28 +171,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           if (_isEditing)
             IconButton(
-              icon: Icon(Icons.check),
+              icon: Icon(Icons.check, color: Colors.white),
               onPressed: _saveUserProfile,
             ),
-          PopupMenuButton<String>(
-  onSelected: (value) {
-    if (value == 'logout') {
-      _signOut();
-    } else if (value == 'help') {
-      context.go('/help'); // Navigate to HelpScreen
-    }
-  },
-  itemBuilder: (context) => [
-    PopupMenuItem(
-      value: 'logout',
-      child: Text('Logout'),
-    ),
-    PopupMenuItem(
-      value: 'help',
-      child: Text('Help'),
-    ),
-  ],
-),
+          PopupMenuButton(
+            onSelected: (value) {
+              if (value == 'logout') {
+                _signOut();
+              } else if (value == 'help') {
+                Navigator.pushNamed(context, '/help'); // Navigate to HelpScreen
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'logout',
+                child: Text('Logout'),
+              ),
+              PopupMenuItem(
+                value: 'help',
+                child: Text('Help'),
+              ),
+            ],
+          ),
         ],
       ),
       body: Padding(
@@ -210,16 +209,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading: Icon(Icons.camera_alt),
-                        title: Text('Take Photo'),
+                        leading: Icon(Icons.camera_alt, color: Color(0xFF42A5F5)),
+                        title: Text('Take Photo', style: TextStyle(color: Color(0xFF1A237E))),
                         onTap: () {
                           Navigator.pop(context);
                           _pickImage(ImageSource.camera);
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.photo_library),
-                        title: Text('Choose from Gallery'),
+                        leading: Icon(Icons.photo_library, color: Color(0xFF42A5F5)),
+                        title: Text('Choose from Gallery', style: TextStyle(color: Color(0xFF1A237E))),
                         onTap: () {
                           Navigator.pop(context);
                           _pickImage(ImageSource.gallery);
@@ -232,8 +231,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: _userProfile['photoUrl'] != null && _userProfile['photoUrl'].toString().isNotEmpty
-                    ? MemoryImage(base64Decode(_userProfile['photoUrl'])) // Decode Base64 and display image
+                    ? MemoryImage(base64Decode(_userProfile['photoUrl']))
                     : AssetImage('assets/default_profile.png') as ImageProvider, // Default image
+                backgroundColor: Colors.grey.shade300,
               ),
             ),
             SizedBox(height: 20),
@@ -243,7 +243,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Name',
-                prefixIcon: Icon(Icons.person),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.person, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -255,7 +271,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Age',
-                prefixIcon: Icon(Icons.cake),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.cake, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -266,7 +298,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: _genderController,
               decoration: InputDecoration(
                 labelText: 'Gender',
-                prefixIcon: Icon(Icons.transgender),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.transgender, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -277,7 +325,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: _countryController,
               decoration: InputDecoration(
                 labelText: 'Country',
-                prefixIcon: Icon(Icons.location_on),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.location_on, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -289,7 +353,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               maxLines: 3,
               decoration: InputDecoration(
                 labelText: 'Bio',
-                prefixIcon: Icon(Icons.description),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.description, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -301,7 +381,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: 'Interests',
-                prefixIcon: Icon(Icons.favorite),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.favorite, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -313,7 +409,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: 'Achievements',
-                prefixIcon: Icon(Icons.star),
+                labelStyle: TextStyle(color: Color(0xFF42A5F5)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Color(0xFF2196F3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                prefixIcon: Icon(Icons.star, color: Color(0xFF42A5F5)),
               ),
               readOnly: !_isEditing,
             ),
@@ -322,5 +434,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
 }
