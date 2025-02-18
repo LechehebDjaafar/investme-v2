@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 class BrowseProjects extends StatefulWidget {
   @override
@@ -10,8 +11,37 @@ class BrowseProjects extends StatefulWidget {
 
 class _BrowseProjectsState extends State<BrowseProjects> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String? selectedFilter; // Variable to track the selected filter
   String searchQuery = ''; // Search query
+
+  List<String> _investedProjectIds = []; // Store invested project IDs
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInvestedProjects(); // Fetch invested projects when the widget initializes
+  }
+
+  // Fetch the list of invested project IDs for the current user
+  Future<void> _fetchInvestedProjects() async {
+    try {
+      final User? user = _auth.currentUser;
+      if (user == null) return;
+
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (!userDoc.exists) return;
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+      final List<dynamic> investedProjects = userData['investedProjects'] ?? [];
+      setState(() {
+        _investedProjectIds = List<String>.from(investedProjects);
+      });
+    } catch (e) {
+      print('Error fetching invested projects: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +55,7 @@ class _BrowseProjectsState extends State<BrowseProjects> {
         backgroundColor: const Color(0xFFE8F1FA), // Light blue app bar
         elevation: 0,
       ),
-      body: CustomScrollView( // Use CustomScrollView for smooth scrolling
+      body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
@@ -106,15 +136,26 @@ class _BrowseProjectsState extends State<BrowseProjects> {
                 );
               }
 
-              List<Map<String, dynamic>> filteredProjects = snapshot.data!.docs
-                  .where((project) =>
-                      project['name']
-                          ?.toString()
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()) ??
-                      false)
+              // Filter out invested projects
+              List<Map<String, dynamic>> allProjects = snapshot.data!.docs
                   .map((doc) => doc.data() as Map<String, dynamic>)
                   .toList();
+
+              List<Map<String, dynamic>> filteredProjects = allProjects
+                  .where((project) =>
+                      !(_investedProjectIds.contains(project['projectId'])) &&
+                      (project['name']
+                              ?.toString()
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase()) ??
+                          false))
+                  .toList();
+
+              if (filteredProjects.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('No projects available', style: TextStyle(color: Color(0xFF032D64)))),
+                );
+              }
 
               return SliverGrid(
                 delegate: SliverChildBuilderDelegate(
@@ -165,15 +206,6 @@ class _BrowseProjectsState extends State<BrowseProjects> {
 
   // Build a project card
   Widget _buildProjectCard(BuildContext context, Map<String, dynamic> projectData) {
-      if (projectData['projectId'] == null || 
-      projectData['name'] == null || 
-      projectData['category'] == null || 
-      projectData['currentAmount'] == null || 
-      projectData['targetAmount'] == null) {
-    return Card(
-      child: Center(child: Text('Invalid Project')),
-    );
-  }
     // Check if the project has an image, otherwise use a default placeholder
     String imageUrl = (projectData['media']?['images'] as List?)?.isNotEmpty == true
         ? projectData['media']['images'][0]
@@ -192,7 +224,7 @@ class _BrowseProjectsState extends State<BrowseProjects> {
         color: const Color(0xFF1F87D2).withOpacity(0.2), // Light blue card background
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Make the column flexible and minimal
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Project Image with Placeholder
             ClipRRect(
