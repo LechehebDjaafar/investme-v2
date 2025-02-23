@@ -63,8 +63,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-      - assets/translations/en.json
-      - assets/translations/ar.json
+      # - assets/translations/en.json
+      # - assets/translations/ar.json
       - assets/logo.jpg
 
   # The following line ensures that the Material Icons font is
