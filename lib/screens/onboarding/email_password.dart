@@ -119,7 +119,18 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 60),
+                        // زر العودة
+            Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: const Color(0xFF032D64)), // أزرق داكن
+                onPressed: () {
+                      context.go('/onboarding/role-selection'); // العودة إلى صفحة العمر والجنس // الرجوع إلى الصفحة السابقة
+                },
+              ),
+            ),
+            // const SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Title
             Text(
               "Create your account",
