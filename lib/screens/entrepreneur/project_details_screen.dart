@@ -15,7 +15,7 @@ class ProjectDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFE8F0FE), // Light Blue Background
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2196F3), // Bright Blue
+        backgroundColor: const Color(0xFF1A237E), // Bright Blue
         title: Text(
           'Project Details',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
@@ -259,7 +259,7 @@ class ProjectDetailsScreen extends StatelessWidget {
       case 'Rejected':
         return const Color(0xFFBBDEFB); // Light Blue
       case 'Under Review':
-        return const Color(0xFFFFA000); // Orange
+        return const Color(0xFF64B5F6); // Orange
       default:
         return const Color(0xFF42A5F5); // Light Blue
     }

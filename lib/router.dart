@@ -41,7 +41,7 @@ final GoRouter router = GoRouter(
     // شاشة المساعدة (Help Screen)
     GoRoute(
       path: '/help',
-      builder: (context, state) => HelpScreen(),
+      builder: (context, state) => AdminAndResourcesPage(),
     ),
 
     // شاشة تسجيل الدخول (Login Screen)

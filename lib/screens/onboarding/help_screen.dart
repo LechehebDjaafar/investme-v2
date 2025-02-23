@@ -1,146 +1,168 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-class HelpScreen extends StatefulWidget {
-  @override
-  _HelpScreenState createState() => _HelpScreenState();
-}
-
-class _HelpScreenState extends State<HelpScreen> {
-  final TextEditingController _messageController = TextEditingController();
-
+class AdminAndResourcesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Help'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return DefaultTabController(
+      length: 3, // عدد الأقسام
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Admin & Resources'),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Contact Admins'), // التواصل مع المسؤولين
+              Tab(text: 'Educational Resources'), // المواد التعليمية
+              Tab(text: 'Podcasts'), // البودكاست
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            // Frequently Asked Questions (FAQs)
-            Text(
-              'Frequently Asked Questions:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-
-            // FAQ 1
-            ExpansionTile(
-              title: Text('How do I add a new project?'),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'To add a new project, go to the dashboard and click on the "+" icon.',
-                  ),
-                ),
-              ],
-            ),
-
-            // FAQ 2
-            ExpansionTile(
-              title: Text('How do I edit my profile?'),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    'You can edit your profile by clicking on the "Edit" button in the top-right corner of the profile screen.',
-                  ),
-                ),
-              ],
-            ),
-
-            // Contact Us Section
-            SizedBox(height: 20),
-            Text(
-              'Contact Us:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-
-            // Message Input Field
-            TextFormField(
-              controller: _messageController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                labelText: 'Send a message to InvestMe',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 10),
-
-            // Buttons Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Cancel Button
-                ElevatedButton(
-                  onPressed: () {
-                    context.go('/main'); // Go back to ProfileScreen
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Red for cancel
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-
-                // Send Button
-                ElevatedButton(
-                  onPressed: () {
-                    _sendMessage(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF4B400), // Gold for send
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    'Send',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
+            ContactAdminsSection(), // قسم التواصل مع المسؤولين
+            EducationalResourcesSection(), // قسم المواد التعليمية
+            PodcastsSection(), // قسم البودكاست
           ],
         ),
       ),
     );
   }
+}
 
-  // Function to send a message to InvestMe
-  void _sendMessage(BuildContext context) {
-    final message = _messageController.text.trim();
-
-    if (message.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a message')),
-      );
-      return;
-    }
-
-    // Simulate sending the message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Message sent successfully!')),
+// قسم التواصل مع المسؤولين
+class ContactAdminsSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Contact Admins',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          TextField(
+            decoration: InputDecoration(labelText: 'Your Message'),
+            maxLines: 5,
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              // إرسال الرسالة
+            },
+            child: Text('Send Message'),
+          ),
+        ],
+      ),
     );
+  }
+}
 
-    // Clear the text field after sending
-    _messageController.clear();
+// قسم المواد التعليمية
+class EducationalResourcesSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        Text(
+          'Educational Resources',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        ResourceCard(
+          title: 'How to Pitch Your Idea',
+          type: 'Video',
+          onTap: () {},
+        ),
+        ResourceCard(
+          title: 'The Art of Fundraising',
+          type: 'Article',
+          onTap: () {},
+        ),
+        // ... المزيد من البطاقات
+      ],
+    );
+  }
+}
 
-    // Navigate to Dashboard after sending the message
-    context.go('/main'); // Assuming '/main' is the route for MainScreen
+// قسم البودكاست
+class PodcastsSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        Text(
+          'Podcasts',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 10),
+        PodcastCard(
+          title: 'Episode 1: Startup Success Stories',
+          guestName: 'John Doe',
+          audioUrl: 'https://example.com/podcast.mp3',
+          onTap: () {},
+        ),
+        PodcastCard(
+          title: 'Episode 2: Investment Strategies',
+          guestName: 'Jane Smith',
+          audioUrl: 'https://example.com/podcast2.mp3',
+          onTap: () {},
+        ),
+        // ... المزيد من الحلقات
+      ],
+    );
+  }
+}
+
+// بطاقة المادة التعليمية
+class ResourceCard extends StatelessWidget {
+  final String title;
+  final String type;
+  final VoidCallback onTap;
+
+  const ResourceCard({required this.title, required this.type, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(type),
+        trailing: Icon(Icons.arrow_forward),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+// بطاقة البودكاست
+class PodcastCard extends StatelessWidget {
+  final String title;
+  final String guestName;
+  final String audioUrl;
+  final VoidCallback onTap;
+
+  const PodcastCard({
+    required this.title,
+    required this.guestName,
+    required this.audioUrl,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text('Guest: $guestName'),
+        trailing: Icon(Icons.play_arrow),
+        onTap: onTap,
+      ),
+    );
   }
 }

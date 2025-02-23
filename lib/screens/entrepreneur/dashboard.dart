@@ -14,7 +14,7 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFE8F0FE), // خلفية أزرق فاتح جدًا
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2196F3), // أزرق مشرق
+        backgroundColor: const Color(0xFF1A237E), // أزرق مشرق
         title: Text(
           'InvestMe',
           style: GoogleFonts.poppins(
@@ -74,7 +74,7 @@ class DashboardScreen extends StatelessWidget {
                         StatCard(
                           title: 'Under Review',
                           count: underReviewProjects,
-                          color: const Color(0xFFFFA000), // برتقالي مشرق
+                          color: const Color(0xFF64B5F6), // أزرق متوسط فاتح (بديل للبرتقالي)
                         ),
                       ],
                     ),

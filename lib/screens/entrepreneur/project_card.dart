@@ -22,7 +22,7 @@ class ProjectCard extends StatelessWidget {
       case 'Rejected':
         return const Color(0xFFBBDEFB); // Light Blue
       case 'Under Review':
-        return const Color(0xFFFFA000); // Orange
+        return const Color(0xFF64B5F6); // Orange
       default:
         return const Color(0xFF42A5F5); // Light Blue
     }
