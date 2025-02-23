@@ -34,17 +34,16 @@ class _InvestorOrEntrepreneurScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                        // زر العودة
+            // زر العودة
             Align(
               alignment: Alignment.topLeft,
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: const Color(0xFF032D64)), // أزرق داكن
                 onPressed: () {
-                      context.go('/onboarding/age-gender'); // العودة إلى صفحة العمر والجنس // الرجوع إلى الصفحة السابقة
+                  context.go('/onboarding/age-gender'); // العودة إلى صفحة العمر والجنس
                 },
               ),
             ),
-            // const SizedBox(height: 20),
             const SizedBox(height: 20),
             // عنوان الصفحة
             Text(
@@ -71,13 +70,13 @@ class _InvestorOrEntrepreneurScreenState
             // زر اختيار دور رائد الأعمال
             _buildRoleButton("Entrepreneur", Icons.business_center),
             const Spacer(),
-            // زر إنشاء الحساب
+            // زر المتابعة
             ElevatedButton(
               onPressed: () {
                 if (selectedRole != null) {
-                  // الانتقال إلى شاشة إنشاء الحساب مع تمرير جميع البيانات
+                  // الانتقال إلى شاشة قراءة وقبول القواعد مع تمرير جميع البيانات
                   context.go(
-                    '/onboarding/email-password',
+                    '/onboarding/read-and-accept-rules', // تغيير المسار إلى صفحة القواعد
                     extra: {
                       'userRole': selectedRole,
                       'firstName': widget.firstName, // الاسم الأول
@@ -101,7 +100,7 @@ class _InvestorOrEntrepreneurScreenState
                 ),
               ),
               child: Text(
-                "Create Account",
+                "Next", // تغيير النص إلى "Next"
                 style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),

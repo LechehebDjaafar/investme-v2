@@ -2,6 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'screens/entrepreneur/main_screen.dart';
 import 'screens/investor/ivestme_EditProfile.dart' as EditPro;
 import 'screens/investor/profile-entrepreneur.dart' as EntrepreneurPro;
+import 'screens/onboarding/Read_and_Accept_Rules.dart'
+    as ReadAndAcceptRulesScreen;
 import 'screens/onboarding/help_screen.dart';
 import 'screens/onboarding/splash_screen.dart' as splash;
 import 'screens/onboarding/email_password.dart' as emailpassword;
@@ -12,7 +14,8 @@ import 'screens/onboarding/home.dart' as home;
 import '/screens/auth/login.dart' as login;
 import 'screens/entrepreneur/dashboard.dart' as entrepreneurDashboard;
 import 'screens/entrepreneur/messages_screen.dart' as entrepreneurMessages;
-import 'screens/entrepreneur/notifications_screen.dart' as entrepreneurNotifications;
+import 'screens/entrepreneur/notifications_screen.dart'
+    as entrepreneurNotifications;
 import 'splashscreen.dart' as splash1; // Removed incorrect import
 // إضافة مستوردات لجزء المستثمر
 import 'screens/investor/investor_main_screen.dart' as investorMainScreen;
@@ -61,7 +64,8 @@ final GoRouter router = GoRouter(
       path: '/onboarding/age-gender',
       name: 'age-gender',
       builder: (context, state) {
-        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+        final Map<String, dynamic>? userData =
+            state.extra as Map<String, dynamic>?;
         return ageGender.AgeGenderScreen(
           firstName: userData?['firstName'] ?? '',
           lastName: userData?['lastName'] ?? '',
@@ -74,8 +78,11 @@ final GoRouter router = GoRouter(
       path: '/onboarding/role-selection',
       name: 'role-selection',
       builder: (context, state) {
-        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+        // استخراج البيانات من extra
+        final Map<String, dynamic>? userData =
+            state.extra as Map<String, dynamic>?;
         return roleSelection.InvestorOrEntrepreneurScreen(
+          // تصحيح اسم الصفحة
           firstName: userData?['firstName'] ?? '',
           lastName: userData?['lastName'] ?? '',
           dateOfBirth: userData?['dateOfBirth'] ?? DateTime.now(),
@@ -83,13 +90,25 @@ final GoRouter router = GoRouter(
         );
       },
     ),
+GoRoute(
+  path: '/onboarding/read-and-accept-rules',
+  name: 'read-and-accept-rules',
+  builder: (context, state) {
+    // استخراج البيانات من extra
+    final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+    return ReadAndAcceptRulesScreen.ReadAndAcceptRulesScreen(
+      userData: userData ?? {}, // تجنب الأخطاء إذا كانت البيانات فارغة
+    );
+  },
+),
 
     // شاشة البريد الإلكتروني وكلمة المرور (Email Password)
     GoRoute(
       path: '/onboarding/email-password',
       name: 'email-password',
       builder: (context, state) {
-        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+        final Map<String, dynamic>? userData =
+            state.extra as Map<String, dynamic>?;
         return emailpassword.EmailPasswordScreen(
           userRole: userData?['userRole'] ?? 'Investor',
           firstName: userData?['firstName'] ?? '',
@@ -105,12 +124,14 @@ final GoRouter router = GoRouter(
       path: '/home',
       name: 'home',
       builder: (context, state) {
-        final Map<String, dynamic>? userData = state.extra as Map<String, dynamic>?;
+        final Map<String, dynamic>? userData =
+            state.extra as Map<String, dynamic>?;
         final String? userRole = userData?['role'];
         final String? userName = userData?['name'];
 
         if (userRole == null || userName == null) {
-          return splash.SplashScreen(); // إعادة التوجيه إلى Splash Screen إذا لم يكن هناك دور أو اسم
+          return splash
+              .SplashScreen(); // إعادة التوجيه إلى Splash Screen إذا لم يكن هناك دور أو اسم
         }
 
         return home.HomeScreen(userRole: userRole, userName: userName);
@@ -143,7 +164,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/entrepreneur/notifications',
       name: 'entrepreneur-notifications',
-      builder: (context, state) => entrepreneurNotifications.NotificationsScreen(),
+      builder: (context, state) =>
+          entrepreneurNotifications.NotificationsScreen(),
     ),
 
     // ================== Investor Screens ==================
@@ -169,14 +191,14 @@ final GoRouter router = GoRouter(
     ),
 
     // تفاصيل المشروع (Project Details)
-GoRoute(
-  path: '/investor/project-details',
-  name: 'investor-project-details',
-  builder: (context, state) {
-    final String projectId = state.extra as String;
-    return investorProjectDetails.ProjectDetails(projectId: projectId);
-  },
-),
+    GoRoute(
+      path: '/investor/project-details',
+      name: 'investor-project-details',
+      builder: (context, state) {
+        final String projectId = state.extra as String;
+        return investorProjectDetails.ProjectDetails(projectId: projectId);
+      },
+    ),
 
     // ملف المستثمر الشخصي (Profile)
     GoRoute(
@@ -194,7 +216,8 @@ GoRoute(
       name: 'profile-entrepreneur',
       builder: (context, state) {
         final String entrepreneurId = state.extra as String;
-        return EntrepreneurPro.EntrepreneurProfile(entrepreneurId: entrepreneurId);
+        return EntrepreneurPro.EntrepreneurProfile(
+            entrepreneurId: entrepreneurId);
       },
     ),
   ],

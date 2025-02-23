@@ -125,7 +125,7 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: const Color(0xFF032D64)), // أزرق داكن
                 onPressed: () {
-                      context.go('/onboarding/role-selection'); // العودة إلى صفحة العمر والجنس // الرجوع إلى الصفحة السابقة
+                      context.go('/onboarding/Read_and_Accept_Rules'); // العودة إلى صفحة العمر والجنس // الرجوع إلى الصفحة السابقة
                 },
               ),
             ),
