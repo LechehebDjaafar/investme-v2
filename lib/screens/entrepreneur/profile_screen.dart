@@ -155,9 +155,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFE8F0FE), // خلفية عامة
+      backgroundColor: const Color(0xFFE8F0FE), // خلفية عامة
       appBar: AppBar(
-        backgroundColor: Color(0xFF1A237E), // أزرق داكن غني
+        backgroundColor: const Color(0xFF1A237E), // أزرق داكن غني
         title: Text('Profile', style: TextStyle(color: Colors.white)),
         actions: [
           if (!_isEditing)
@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: Icon(Icons.edit, color: Colors.white),
               onPressed: () {
                 setState(() {
-                  _isEditing = true; // Enter edit mode
+                  _isEditing = true; // الدخول إلى وضع التحرير
                 });
               },
             ),
@@ -178,8 +178,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onSelected: (value) {
               if (value == 'logout') {
                 _signOut();
-              } else if (value == 'help') {
-                Navigator.pushNamed(context, '/help'); // Navigate to HelpScreen
               }
             },
             itemBuilder: (context) => [
@@ -187,20 +185,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 value: 'logout',
                 child: Text('Logout'),
               ),
-              PopupMenuItem(
-                value: 'help',
-                child: Text('Help'),
-              ),
             ],
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView( // استبدال Column بـ ListView
           children: [
-            // Profile Picture
+            // صورة البروفايل
             GestureDetector(
               onTap: () {
                 showModalBottomSheet(
@@ -232,13 +225,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 radius: 50,
                 backgroundImage: _userProfile['photoUrl'] != null && _userProfile['photoUrl'].toString().isNotEmpty
                     ? MemoryImage(base64Decode(_userProfile['photoUrl']))
-                    : AssetImage('assets/default_profile.png') as ImageProvider, // Default image
+                    : AssetImage('assets/default_profile.png') as ImageProvider, // الصورة الافتراضية
                 backgroundColor: Colors.grey.shade300,
               ),
             ),
             SizedBox(height: 20),
 
-            // Name Field
+            // حقل الاسم
             TextFormField(
               controller: _nameController,
               decoration: InputDecoration(
@@ -265,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Age Field
+            // حقل العمر
             TextFormField(
               controller: _ageController,
               keyboardType: TextInputType.number,
@@ -293,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Gender Field
+            // حقل الجنس
             TextFormField(
               controller: _genderController,
               decoration: InputDecoration(
@@ -320,7 +313,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Country Field
+            // حقل الدولة
             TextFormField(
               controller: _countryController,
               decoration: InputDecoration(
@@ -347,7 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Bio Field
+            // حقل السيرة الذاتية
             TextFormField(
               controller: _bioController,
               maxLines: 3,
@@ -375,7 +368,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Interests Field
+            // حقل الاهتمامات
             TextFormField(
               controller: _interestsController,
               maxLines: 2,
@@ -403,7 +396,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 10),
 
-            // Achievements Field
+            // حقل الإنجازات
             TextFormField(
               controller: _achievementsController,
               maxLines: 2,
@@ -434,4 +427,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
 }

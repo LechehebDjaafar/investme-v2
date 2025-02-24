@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:investme/screens/entrepreneur/unified_page.dart';
 import '../onboarding/splash_screen.dart';
 import 'dashboard.dart';
 import 'messages_screen.dart';
@@ -18,7 +19,7 @@ class _MainStateManager extends State<MainScreen> {
     DashboardScreen(),
     MessagesScreen(),
     NotificationsScreen(),
-    ProfileScreen(),
+    UnifiedPage(),
   ];
 
   @override
