@@ -3,6 +3,7 @@ import 'investor_dashboard.dart';
 import 'browse_projects.dart';
 import 'investor_notifications.dart';
 import 'investor_profile.dart';
+import 'unified_page_ivestor.dart';
 
 class InvestorMainScreen extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _InvestorMainScreenState extends State<InvestorMainScreen> {
     InvestorDashboard(), // Home
     BrowseProjects(), // Browse Projects
     NotificationsScreen(), // Notifications
-    InvestorProfile(), // Profile
+    UnifiedPage(), // Profile
   ];
 
   @override
